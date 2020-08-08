@@ -1,9 +1,9 @@
 {
-  "name": "CHANGE THIS : Extension boilerplate",
+  "name": "Audio Dynamics Compressor",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "This extension was created with the awesome extensionizr.com",
-  "homepage_url": "http://extensionizr.com",
+  "description": "Smooth out uneven audio volumes in media",
+  "homepage_url": "https:/github.com/stella3d/browser-compressor",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -16,7 +16,7 @@
   },
   "options_page": "src/options_custom/index.html",
   "page_action": {
-    "default_icon": "icons/icon19.png",
+    "default_icon": "icons/icon48.png",
     "default_title": "page action demo",
     "default_popup": "src/page_action/page_action.html"
   },
@@ -26,7 +26,9 @@
   "content_scripts": [
     {
       "matches": [
-        "https://www.youtube.com/watch?v=*"
+        "https://www.youtube.com/watch?v=*",
+        "https://vimeo.com/*",
+        "https://www.dailymotion.com/video/*"
       ],
       "js": [
         "src/inject/inject.js"

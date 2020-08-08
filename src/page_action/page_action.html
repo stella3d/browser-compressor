@@ -5,10 +5,14 @@
 		color:floralwhite;
 	}
 
+	input[type=range]{
+		width: 148px;
+	}
+
 	#mainPopup {
 		padding: 10px;
-		height: 132px;
-		width: 228px;
+		height: 140px;
+		width: 250px;
 		font-family: Helvetica, Ubuntu, Arial, sans-serif;
 	}
 	h1 {
@@ -54,10 +58,17 @@
 		font-size: 1.2em;
 	}
 
+	#reductionValue {
+		display: inline-block;
+		margin-left: 32px;
+		padding-bottom: 16px;
+	}
+
 	/* on-off toggle styles */
 	.onoffswitch {
 		position: relative; width: 55px;
 		-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+		display: inline-block;
 	}
 	.onoffswitch-checkbox {
 		position: absolute;
@@ -81,6 +92,9 @@
 	}
 	.onoffswitch-checkbox:checked + .onoffswitch-label {
 		background-color: #42A5F5;
+		color: black;
+		padding-left: 8px;
+		z-index: 5;
 	}
 	.onoffswitch-checkbox:checked + .onoffswitch-label, .onoffswitch-checkbox:checked + .onoffswitch-label:before {
 		border-color: #42A5F5;
@@ -101,8 +115,11 @@
 
 <div class="onoffswitch">
 	<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onOff" tabindex="0" data-active="false">
-	<label class="onoffswitch-label" for="onOff"></label>
+	<label class="onoffswitch-label" for="onOff" id="onOffLabel"></label>
 </div>
+
+<div id="reductionValue">0 Db</div>
+
 
 <!-- <button id="onOff" data-active="false">Turn ON</button> -->
 <br/>
@@ -131,7 +148,8 @@
 </input>
 <br/>
 
-<input type="range" id="release" min="0" max="1" step="0.01" value="0.15">
+<!-- web audio supports a range of 0-1 for release, but we use half, 0.5, for a higher precision slider -->
+<input type="range" id="release" min="0" max="0.5" step="0.01" value="0.15">
 <div class="tooltip">
 	Release
 	<span class="tooltiptext">How quickly voume is restored after going under threshold</span>
@@ -146,6 +164,7 @@
 </div>
 </input>
 <br/>
+
 
 <!--
 <p>To shut this popup down, edit the manifest file and remove the "default popup" key. To edit it, just edit ext/page_action/page_action.html. The CSS is there, too.</p>

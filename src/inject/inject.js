@@ -14,7 +14,7 @@ compressor = {
 		comp: {},
 		gain: {}
 	},
-	initialized: false,
+	ready: false,
 	enabled: false,
 
 	createCompressorNode(audioCtx) {
@@ -46,16 +46,53 @@ compressor = {
 		gain.connect(aContext.destination);
 
 		this.audioContext = aContext;
-		this.initialized = true;
+		this.ready = true;
 		this.enabled = true;
 	},
 
+	getVideoElements() {
+		return [].slice.call(document.querySelectorAll('video'));
+	},
+
 	getVideoElement() {
-		const videoElements = [].slice.call(document.querySelectorAll('video'));
+		const videoElements = this.getVideoElements();;
 		return videoElements.length > 0 ? videoElements[0] : null;
 	},
 
+	getAudioElements() {
+		return [].slice.call(document.querySelectorAll('audio'));
+	},
+
+	tryGetSourceFromCommonVideoSites(videoElements) {
+		const href = window.location.href;
+		if(href.includes('dailymotion.com/video') && videoElements.length == 2)
+			return videoElements[0];
+		else
+			return null;
+	},
+
+	tryFindSingleMediaSource() {
+		const videoElements = this.getVideoElements();
+		const audioElements = this.getAudioElements();
+
+		// we can avoid having to ask the user for input if there is only one choice
+		if(videoElements.length == 1 && audioElements.length == 0)
+		{
+			console.log('chose single video element');
+			return videoElements[0];
+		}
+		else if(audioElements.length == 1 && videoElements.length == 0)
+			return audioElements[0];
+		else
+		{
+			return this.tryGetSourceFromCommonVideoSites(videoElements);
+		}
+	},
+
 	turnOff() {
+		if(!this.enabled)
+			return;
+
 		try {
 			this.mediaSource.disconnect(this.nodes.comp);
 			this.nodes.comp.disconnect(this.nodes.gain);
@@ -69,9 +106,13 @@ compressor = {
 	},
 
 	turnOn() {
-		if(!this.initialized) {
+		if(this.enabled)
+			return;
+
+		if(!this.ready) {
 			// TODO - genericise the ability to find the media element so it works across many sites
-			const element = this.getVideoElement();
+			const element = this.tryFindSingleMediaSource();
+			console.log("media element audio source", element);
 			if(element != null)
 				this.initialize(element);		
 			return;
@@ -90,117 +131,106 @@ compressor = {
 	},
 
 	setRatio(ratio) {
-		this.nodes.comp.ratio.setValueAtTime(ratio, this.audioContext.currentTime);
+		if(this.ready)
+			this.nodes.comp.ratio.setValueAtTime(ratio, this.audioContext.currentTime);
 	},
 
 	setThreshold(threshold) {
-		this.nodes.comp.threshold.setValueAtTime(threshold, this.audioContext.currentTime);
+		if(this.ready)
+			this.nodes.comp.threshold.setValueAtTime(threshold, this.audioContext.currentTime);
 	},
 
 	setAttack(attack) {
-		this.nodes.comp.attack.setValueAtTime(attack, this.audioContext.currentTime);
+		if(this.ready)
+			this.nodes.comp.attack.setValueAtTime(attack, this.audioContext.currentTime);
 	},
 
 	setRelease(release) {
-		this.nodes.comp.release.setValueAtTime(release, this.audioContext.currentTime);
+		if(this.ready)
+			this.nodes.comp.release.setValueAtTime(release, this.audioContext.currentTime);
 	},
 
 	setGain(gain) {
-		this.nodes.gain.gain.setValueAtTime(gain, this.audioContext.currentTime);
+		if(this.ready)
+			this.nodes.gain.gain.setValueAtTime(gain, this.audioContext.currentTime);
+	},
+	
+	getState() {
+		if(!this.ready)
+			return { enabled: false };
+		
+		const comp = this.nodes.comp;
+		return {
+			enabled: this.enabled,
+			comp: { 
+				threshold: comp.threshold.value,
+				ratio: comp.ratio.value,
+				attack: comp.attack.value,
+				release: comp.release.value,
+				knee: comp.knee.value
+			},
+			gain: this.nodes.gain.gain.value
+		}
+	},
+
+	getGainReduction() {
+		return this.nodes.comp.reduction;
 	}
 }
 
 // handle messages coming from the popup controls
 chrome.runtime.onMessage.addListener(
 	(request, sender, sendResponse) => {
-	  const command = request["do"];
+	  const command = request['do'];
 	  if(!command) 
 		return;
 
-	  const cmdValue = request["value"];
-	  if(cmdValue)
-		console.log(`command: ${command}, value: ${cmdValue}`);
-	  else
-	  	console.log(`command: ${command}`);
+	  const cmdValue = request['value'];
+	  console.log(`command: ${command}, value: ${cmdValue ? cmdValue : 'none'}`);
 		
 	  switch(command) {
-		case "compressionON":
+		case 'compressorOn':
 			compressor.turnOn();
-			console.log("turned ON compression");
-			sendResponse({result: "compressed af"});
 			break;
-		case "compressionOFF":
+		case 'compressorOff':
 			compressor.turnOff();
-			console.log("turned OFF compression");
-			sendResponse({result: "69 & uncompressed"});
 			break;
-		case "setRatio":
-			if(compressor.initialized && cmdValue) {
-				compressor.setRatio(cmdValue);
-				sendResponse({ success : true });
-			}
+		case 'setRatio':
+			compressor.setRatio(cmdValue);
 			break;
-		case "setThreshold":
-			if(compressor.initialized && cmdValue) {
-				compressor.setThreshold(cmdValue);
-				sendResponse({ success : true });
-			}
+		case 'setThreshold':
+			compressor.setThreshold(cmdValue);
 			break;
-		case "setAttack":
-			if(compressor.initialized && cmdValue) {
-				compressor.setAttack(cmdValue);
-				sendResponse({ success : true });
-			}
+		case 'setAttack':
+			compressor.setAttack(cmdValue);
 			break;
-		case "setRelease":
-			if(compressor.initialized && cmdValue) {
-				compressor.setRelease(cmdValue);
-				sendResponse({ success : true });
-			}
+		case 'setRelease':
+			compressor.setRelease(cmdValue);
 			break;
-		case "setGain":
-			if(compressor.initialized && cmdValue) {
-				compressor.setGain(cmdValue);
-				sendResponse({ success : true });
-			}
+		case 'setGain':
+			compressor.setGain(cmdValue);
 			break;
-		case "getEnabled":
-			const on = compressor.initialized && compressor.nodes.comp.numberOfInputs > 0;
-			sendResponse({ enabled : on });
+		case 'getState':
+			sendResponse(compressor.getState());
 			break;
-		case "getState":
-			if(!compressor.initialized)
-			{
-				sendResponse({ enabled : false });
-				break;
-			}
-
-			console.log(compressor);
-			const compState = compressor.nodes.comp;
-			sendResponse({
-				enabled: compressor.enabled,
-				comp: { 
-					threshold: compState.threshold.value,
-					ratio: compState.ratio.value,
-					attack: compState.attack.value,
-					release: compState.release.value,
-					knee: compState.knee.value
-				},
-				gain: compressor.nodes.gain.gain.value
-			});
+		case 'getGainReduction':
+			sendResponse({value: compressor.getGainReduction()});
 			break;
 	  }
 	});
 
-
 chrome.extension.sendMessage({}, function(response) {
 	var readyStateCheckInterval = setInterval(function() {
-	if (document.readyState === "complete") {
+	if (document.readyState === 'complete') {
 		clearInterval(readyStateCheckInterval);
 		// ----------------------------------------------------------
 		// This part of the script triggers when page is done loading
-		console.log("Hi! This is from scripts/inject.js, done loading");
+		console.log('Hi! This is from scripts/inject.js, done loading');
 		// ----------------------------------------------------------
+
+		const audioElements = compressor.getAudioElements();
+		console.log("audio elements:");
+		console.log(audioElements);
 	}
 	}, 10);
 });

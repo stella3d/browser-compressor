@@ -8,21 +8,16 @@ function SendCommand(command, commandValue) {
     SendToCurrentTab({do: command, value: commandValue}, console.log);
 }
 
-onToggle = document.getElementById('onOff');
-
-function setupOnOffButton() {
-    onToggle.onclick = () => {
-        let active = onToggle.checked;
-        if(active) {
-            //onToggle.setAttribute('data-active', 'true');
-            SendToCurrentTab({ do : "compressionON" }, console.log);
-        } 
-        else {
-            //onToggle.setAttribute('data-active', 'false');
-            SendToCurrentTab({do : "compressionOFF"}, console.log);
-        }
-    }
+function getState(callback) {
+    SendToCurrentTab({do: "getState"}, callback);
 }
+
+function getGainReduction(callback) {
+    SendToCurrentTab({do: "getGainReduction"}, callback);
+}
+
+onToggle = document.getElementById('onOff');
+onToggleLabel = document.getElementById('onOffLabel');
 
 sliders = {
     ratio: document.getElementById('ratio'),
@@ -32,12 +27,34 @@ sliders = {
     gain: document.getElementById('gain')
 }
 
-function getEnabledState(callback) {
-    SendToCurrentTab({do: "getEnabled"}, callback);
+function setPollGainInterval() {
+    console.log("set poll");
+    // poll the gain reduction of the compressor at 30fps
+    pollGainInterval = setInterval(() => {
+        getGainReduction((response) => {
+            const val = response['value'];
+            currentGainReduction = val;
+            reductionElement.innerHTML = `${val.toFixed(3)} Db`;
+        });
+    }, 33);
 }
 
-function getState(callback) {
-    SendToCurrentTab({do: "getState"}, callback);
+currentGainReduction = 0;
+reductionElement = document.getElementById('reductionValue');
+pollGainInterval = null;
+function setupOnOffButton() {
+    onToggle.onclick = () => {
+        if(onToggle.checked) {
+            onToggleLabel.innerHTML = "On";
+            SendToCurrentTab({ do : "compressorOn" }, console.log);
+            setPollGainInterval();
+        } 
+        else {
+            onToggleLabel.innerHTML = "Off";
+            SendToCurrentTab({do : "compressorOff"}, console.log);
+            clearInterval(pollGainInterval);
+        }
+    }
 }
 
 function setupRangeElement(rangeElement, callback) {
@@ -56,23 +73,23 @@ document.addEventListener('DOMContentLoaded', () => {
     setupOnOffButton();
     setupSliderUpdates();
 
-    console.log('try to get state');
-    // sync UI state with the page
+    // sync popup UI state with the browser page's compressor when opened
     getState((response) => {
-        console.log('getState response');
         console.log(response);
-
+        if(!response)
+            return;
+        
         onToggle.checked = response['enabled'];
 
-        const compState = response['comp'];
-        if(!compState)
+        const comp = response['comp'];
+        if(!comp)
             return;
 
-        sliders.ratio.value = compState['ratio'];
-        sliders.threshold.value = compState['threshold'];
-        sliders.attack.value = compState['attack'];
-        sliders.release.value = compState['release'];
+        sliders.ratio.value = comp['ratio'];
+        sliders.threshold.value = comp['threshold'];
+        sliders.attack.value = comp['attack'];
+        sliders.release.value = comp['release'];
         
-        sliders.gain.value = compState['gain'];
+        sliders.gain.value = comp['gain'];
     });
 });
