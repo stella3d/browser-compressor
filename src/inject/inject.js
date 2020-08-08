@@ -15,6 +15,7 @@ compressor = {
 		gain: {}
 	},
 	initialized: false,
+	enabled: false,
 
 	createCompressorNode(audioCtx) {
 		let comp = audioCtx.createDynamicsCompressor();
@@ -46,6 +47,7 @@ compressor = {
 
 		this.audioContext = aContext;
 		this.initialized = true;
+		this.enabled = true;
 	},
 
 	getVideoElement() {
@@ -59,6 +61,7 @@ compressor = {
 			this.nodes.comp.disconnect(this.nodes.gain);
 			this.nodes.gain.disconnect(this.audioContext.destination);
 			this.mediaSource.connect(this.audioContext.destination);
+			this.enabled = false;
 		} 
 		catch(error) {
 			console.error(error);
@@ -79,6 +82,7 @@ compressor = {
 			this.mediaSource.connect(this.nodes.comp);
 			this.nodes.comp.connect(this.nodes.gain);
 			this.nodes.gain.connect(this.audioContext.destination);
+			this.enabled = true;
 		} 
 		catch(error) {
 			console.error(error);
@@ -171,13 +175,10 @@ chrome.runtime.onMessage.addListener(
 				break;
 			}
 
-			const isOn = compressor.nodes.comp.numberOfInputs > 0;
+			console.log(compressor);
 			const compState = compressor.nodes.comp;
-			console.log('compressor state query');
-			console.log(compState);
-
 			sendResponse({
-				enabled: isOn,
+				enabled: compressor.enabled,
 				comp: { 
 					threshold: compState.threshold.value,
 					ratio: compState.ratio.value,

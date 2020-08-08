@@ -12,13 +12,13 @@ onToggle = document.getElementById('onOff');
 
 function setupOnOffButton() {
     onToggle.onclick = () => {
-        let active = onToggle.getAttribute('data-active');
-        if(active == 'false') {
-            onToggle.setAttribute('data-active', 'true');
+        let active = onToggle.checked;
+        if(active) {
+            //onToggle.setAttribute('data-active', 'true');
             SendToCurrentTab({ do : "compressionON" }, console.log);
         } 
-        else if(active == 'true') {
-            onToggle.setAttribute('data-active', 'false');
+        else {
+            //onToggle.setAttribute('data-active', 'false');
             SendToCurrentTab({do : "compressionOFF"}, console.log);
         }
     }
