@@ -2,45 +2,45 @@
 <style type="text/css">
 	body {
 		background-color: #181818;
-		color:floralwhite
+		color:floralwhite;
 	}
 
 	#mainPopup {
 		padding: 10px;
-		height: 140px;
-		width: 260px;
+		height: 132px;
+		width: 228px;
 		font-family: Helvetica, Ubuntu, Arial, sans-serif;
 	}
 	h1 {
-		font-size: 1.6em;
+		font-size: 1.3em;
 		margin-bottom: 2px;
 	}
 
 	.tooltip {
 		position: relative;
 		display: inline-block;
-		border-bottom: 1px dotted darkgrey; /* If you want dots under the hoverable text */
+		font-size: 1.3em;
+		border-bottom: 1px dotted darkgrey; /* add dots under the text */
 	}
 
 	.tooltip .tooltiptext {
 		visibility: hidden;
-		width: 180px;
+		width: 140px;
 		background-color: #333;
 		color: floralwhite;
 		text-align: center;
 		padding: 5px 0;
 		border-radius: 4px;
+		font-size: 0.82em;
 
-		/* Position the tooltip text */
 		position: absolute;
 		z-index: 1;
 		bottom: 125%;
 		left: 50%;
 		margin-left: -60px;
 
-		/* Fade in tooltip */
 		opacity: 0;
-		transition: opacity 0.3s;
+		transition: opacity 0.25s;
 	}
 
 	.tooltip:hover .tooltiptext {
@@ -51,7 +51,47 @@
 	button {
 		background-color: #333;
 		color: floralwhite;
-		font-size: 1.5em;
+		font-size: 1.2em;
+	}
+
+	/* on-off toggle styles */
+	.onoffswitch {
+		position: relative; width: 55px;
+		-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+	}
+	.onoffswitch-checkbox {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+	.onoffswitch-label {
+		display: block; overflow: hidden; cursor: pointer;
+		height: 18px; padding: 0; line-height: 18px;
+		border: 0px solid #FFFFFF; border-radius: 28px;
+		background-color: #9E9E9E;
+	}
+	.onoffswitch-label:before {
+		content: "";
+		display: block; width: 28px; margin: -5px;
+		background: #FFFFFF;
+		position: absolute; top: 0; bottom: 0;
+		right: 33px;
+		border-radius: 28px;
+		box-shadow: 0 6px 12px 0px #757575;
+	}
+	.onoffswitch-checkbox:checked + .onoffswitch-label {
+		background-color: #42A5F5;
+	}
+	.onoffswitch-checkbox:checked + .onoffswitch-label, .onoffswitch-checkbox:checked + .onoffswitch-label:before {
+		border-color: #42A5F5;
+	}
+	.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+		margin-left: 0;
+	}
+	.onoffswitch-checkbox:checked + .onoffswitch-label:before {
+		right: 0px; 
+		background-color: #2196F3; 
+		box-shadow: 3px 6px 18px 0px rgba(0, 0, 0, 0.2);
 	}
 </style>
 
@@ -59,8 +99,13 @@
 
 <div id="mainPopup">
 
-<button id="onOff" data-active="false">Turn ON</button>
-<br/><br/>
+<div class="onoffswitch">
+	<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onOff" tabindex="0" data-active="false">
+	<label class="onoffswitch-label" for="onOff"></label>
+</div>
+
+<!-- <button id="onOff" data-active="false">Turn ON</button> -->
+<br/>
 
 <input type="range" id="threshold" min="-100" max="0" value="-40">
 <div class="tooltip">
@@ -89,7 +134,7 @@
 <input type="range" id="release" min="0" max="1" step="0.01" value="0.15">
 <div class="tooltip">
 	Release
-	<span class="tooltiptext">How quickly compression stops after going back under threshold</span>
+	<span class="tooltiptext">How quickly compression stops after going under threshold</span>
 </div>
 </input>
 <br/>

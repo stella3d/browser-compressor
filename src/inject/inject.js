@@ -11,22 +11,20 @@ compressor = {
 	audioContext: {},
 	mediaSource: {},
 	nodes: {
-		compressor: {},
+		comp: {},
 		gain: {}
 	},
-	// TODO - allow defaults to be set in options page
-	
 	initialized: false,
 
 	createCompressorNode(audioCtx) {
-		var compressor = audioCtx.createDynamicsCompressor();
-		compressor.threshold.setValueAtTime(defaults.threshold, audioCtx.currentTime);
-		compressor.ratio.setValueAtTime(defaults.ratio, audioCtx.currentTime);
-		compressor.attack.setValueAtTime(defaults.attack, audioCtx.currentTime);
-		compressor.release.setValueAtTime(defaults.release, audioCtx.currentTime);
-		compressor.knee.setValueAtTime(defaults.knee, audioCtx.currentTime);
-		this.nodes.compressor = compressor;
-		return compressor;
+		let comp = audioCtx.createDynamicsCompressor();
+		comp.threshold.setValueAtTime(defaults.threshold, audioCtx.currentTime);
+		comp.ratio.setValueAtTime(defaults.ratio, audioCtx.currentTime);
+		comp.attack.setValueAtTime(defaults.attack, audioCtx.currentTime);
+		comp.release.setValueAtTime(defaults.release, audioCtx.currentTime);
+		comp.knee.setValueAtTime(defaults.knee, audioCtx.currentTime);
+		this.nodes.comp = comp;
+		return comp;
 	},
 
 	createGainNode(audioCtx) {
@@ -57,8 +55,8 @@ compressor = {
 
 	turnOff() {
 		try {
-			this.mediaSource.disconnect(this.nodes.compressor);
-			this.nodes.compressor.disconnect(this.nodes.gain);
+			this.mediaSource.disconnect(this.nodes.comp);
+			this.nodes.comp.disconnect(this.nodes.gain);
 			this.nodes.gain.disconnect(this.audioContext.destination);
 			this.mediaSource.connect(this.audioContext.destination);
 		} 
@@ -78,8 +76,8 @@ compressor = {
 
 		try {
 			this.mediaSource.disconnect(this.audioContext.destination);
-			this.mediaSource.connect(this.nodes.compressor);
-			this.nodes.compressor.connect(this.nodes.gain);
+			this.mediaSource.connect(this.nodes.comp);
+			this.nodes.comp.connect(this.nodes.gain);
 			this.nodes.gain.connect(this.audioContext.destination);
 		} 
 		catch(error) {
@@ -88,19 +86,19 @@ compressor = {
 	},
 
 	setRatio(ratio) {
-		this.nodes.compressor.ratio.setValueAtTime(ratio, this.audioContext.currentTime);
+		this.nodes.comp.ratio.setValueAtTime(ratio, this.audioContext.currentTime);
 	},
 
 	setThreshold(threshold) {
-		this.nodes.compressor.threshold.setValueAtTime(threshold, this.audioContext.currentTime);
+		this.nodes.comp.threshold.setValueAtTime(threshold, this.audioContext.currentTime);
 	},
 
 	setAttack(attack) {
-		this.nodes.compressor.attack.setValueAtTime(attack, this.audioContext.currentTime);
+		this.nodes.comp.attack.setValueAtTime(attack, this.audioContext.currentTime);
 	},
 
 	setRelease(release) {
-		this.nodes.compressor.release.setValueAtTime(release, this.audioContext.currentTime);
+		this.nodes.comp.release.setValueAtTime(release, this.audioContext.currentTime);
 	},
 
 	setGain(gain) {
@@ -124,12 +122,12 @@ chrome.runtime.onMessage.addListener(
 	  switch(command) {
 		case "compressionON":
 			compressor.turnOn();
-			console.log("should have turned ON dynamic range compression");
+			console.log("turned ON compression");
 			sendResponse({result: "compressed af"});
 			break;
 		case "compressionOFF":
 			compressor.turnOff();
-			console.log("should have turned OFF dynamic range compression");
+			console.log("turned OFF compression");
 			sendResponse({result: "69 & uncompressed"});
 			break;
 		case "setRatio":
@@ -161,6 +159,34 @@ chrome.runtime.onMessage.addListener(
 				compressor.setGain(cmdValue);
 				sendResponse({ success : true });
 			}
+			break;
+		case "getEnabled":
+			const on = compressor.initialized && compressor.nodes.comp.numberOfInputs > 0;
+			sendResponse({ enabled : on });
+			break;
+		case "getState":
+			if(!compressor.initialized)
+			{
+				sendResponse({ enabled : false });
+				break;
+			}
+
+			const isOn = compressor.nodes.comp.numberOfInputs > 0;
+			const compState = compressor.nodes.comp;
+			console.log('compressor state query');
+			console.log(compState);
+
+			sendResponse({
+				enabled: isOn,
+				comp: { 
+					threshold: compState.threshold.value,
+					ratio: compState.ratio.value,
+					attack: compState.attack.value,
+					release: compState.release.value,
+					knee: compState.knee.value
+				},
+				gain: compressor.nodes.gain.gain.value
+			});
 			break;
 	  }
 	});

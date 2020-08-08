@@ -8,25 +8,17 @@ function SendCommand(command, commandValue) {
     SendToCurrentTab({do: command, value: commandValue}, console.log);
 }
 
-function setupOnOffButton() {
-    let button = document.getElementById('onOff');
-    button.onclick = () => {
-        let active = button.getAttribute('data-active');
-        if(active == 'false') {
-            button.setAttribute('data-active', 'true');
-            button.innerHTML = 'Turn OFF';
+onToggle = document.getElementById('onOff');
 
-            SendToCurrentTab({
-                do : "compressionON", 
-                value: {
-                    
-                }
-            }, console.log);
+function setupOnOffButton() {
+    onToggle.onclick = () => {
+        let active = onToggle.getAttribute('data-active');
+        if(active == 'false') {
+            onToggle.setAttribute('data-active', 'true');
+            SendToCurrentTab({ do : "compressionON" }, console.log);
         } 
         else if(active == 'true') {
-            button.setAttribute('data-active', 'false');
-            button.innerHTML = 'Turn ON';
-
+            onToggle.setAttribute('data-active', 'false');
             SendToCurrentTab({do : "compressionOFF"}, console.log);
         }
     }
@@ -38,6 +30,14 @@ sliders = {
     attack: document.getElementById('attack'),
     release: document.getElementById('release'),
     gain: document.getElementById('gain')
+}
+
+function getEnabledState(callback) {
+    SendToCurrentTab({do: "getEnabled"}, callback);
+}
+
+function getState(callback) {
+    SendToCurrentTab({do: "getState"}, callback);
 }
 
 function setupRangeElement(rangeElement, callback) {
@@ -55,4 +55,24 @@ function setupSliderUpdates() {
 document.addEventListener('DOMContentLoaded', () => {
     setupOnOffButton();
     setupSliderUpdates();
+
+    console.log('try to get state');
+    // sync UI state with the page
+    getState((response) => {
+        console.log('getState response');
+        console.log(response);
+
+        onToggle.checked = response['enabled'];
+
+        const compState = response['comp'];
+        if(!compState)
+            return;
+
+        sliders.ratio.value = compState['ratio'];
+        sliders.threshold.value = compState['threshold'];
+        sliders.attack.value = compState['attack'];
+        sliders.release.value = compState['release'];
+        
+        sliders.gain.value = compState['gain'];
+    });
 });
