@@ -22,9 +22,10 @@
 
 	.tooltip {
 		position: relative;
-		display: inline-block;
+		display: inline;
 		font-size: 1.3em;
 		border-bottom: 1px dotted darkgrey; /* add dots under the text */
+		margin: auto;
 	}
 
 	.tooltip .tooltiptext {
@@ -124,20 +125,18 @@
 <!-- <button id="onOff" data-active="false">Turn ON</button> -->
 <br/>
 
-<input type="range" id="threshold" min="-100" max="0" value="-40">
+<input type="range" id="threshold" min="-100" max="0" value="-40"/>
 <div class="tooltip">
 	Threshold
 	<span class="tooltiptext">Volume level at which compression begins</span>
 </div>
-</input>
 <br/>
 
-<input type="range" id="ratio" min="1" max="20" step="0.5" value="8">
+<input type="range" id="ratio" min="1" max="20" step="0.5" value="8"/>
 <div class="tooltip">
 	Ratio
 	<span class="tooltiptext">Amount of volume reduction applied when over threshold</span>
 </div>
-</input>
 <br/>
 
 <input type="range" id="attack" min="0" max="1" step="0.01" value="0">

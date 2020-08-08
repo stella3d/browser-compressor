@@ -27,8 +27,13 @@
     {
       "matches": [
         "https://www.youtube.com/watch?v=*",
+        "https://www.twitch.tv/videos/*",
+        "https://twitter.com/*/status/*",
+        "https://twitter.com/search?*",
         "https://vimeo.com/*",
         "https://www.dailymotion.com/video/*"
+        ,
+        "https://hwcdn.libsyn.com/*"
       ],
       "js": [
         "src/inject/inject.js"

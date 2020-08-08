@@ -63,6 +63,7 @@ compressor = {
 		return [].slice.call(document.querySelectorAll('audio'));
 	},
 
+	// some common sites have more than one element, & can work with a bit of searching
 	tryGetSourceFromCommonVideoSites(videoElements) {
 		const href = window.location.href;
 		if(href.includes('dailymotion.com/video') && videoElements.length == 2)
@@ -71,18 +72,21 @@ compressor = {
 			return null;
 	},
 
+	// we can skip asking the user for input if there is only one choice, or it's obvious
 	tryFindSingleMediaSource() {
 		const videoElements = this.getVideoElements();
 		const audioElements = this.getAudioElements();
 
-		// we can avoid having to ask the user for input if there is only one choice
 		if(videoElements.length == 1 && audioElements.length == 0)
 		{
 			console.log('chose single video element');
 			return videoElements[0];
 		}
 		else if(audioElements.length == 1 && videoElements.length == 0)
+		{
+			console.log('chose single audio element');
 			return audioElements[0];
+		}
 		else
 		{
 			return this.tryGetSourceFromCommonVideoSites(videoElements);
@@ -219,19 +223,18 @@ chrome.runtime.onMessage.addListener(
 	  }
 	});
 
-chrome.extension.sendMessage({}, function(response) {
-	var readyStateCheckInterval = setInterval(function() {
-	if (document.readyState === 'complete') {
-		clearInterval(readyStateCheckInterval);
-		// ----------------------------------------------------------
-		// This part of the script triggers when page is done loading
-		console.log('Hi! This is from scripts/inject.js, done loading');
-		// ----------------------------------------------------------
-
-		const audioElements = compressor.getAudioElements();
-		console.log("audio elements:");
-		console.log(audioElements);
-	}
+chrome.extension.sendMessage({}, (response) => {
+	var readyStateCheckInterval = setInterval(() => {
+		switch(document.readyState) {
+			case 'interactive':
+					console.log('readyState is interactive');
+				break;
+			case 'complete': {
+					console.log('readyState is complete');
+					clearInterval(readyStateCheckInterval);
+				}
+				break;
+		}
 	}, 10);
 });
 	
