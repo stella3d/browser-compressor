@@ -1,0 +1,111 @@
+<!doctype html>
+<style type="text/css">
+	body {
+		background-color: #181818;
+		color:floralwhite
+	}
+
+	#mainPopup {
+		padding: 10px;
+		height: 140px;
+		width: 260px;
+		font-family: Helvetica, Ubuntu, Arial, sans-serif;
+	}
+	h1 {
+		font-size: 1.6em;
+		margin-bottom: 2px;
+	}
+
+	.tooltip {
+		position: relative;
+		display: inline-block;
+		border-bottom: 1px dotted darkgrey; /* If you want dots under the hoverable text */
+	}
+
+	.tooltip .tooltiptext {
+		visibility: hidden;
+		width: 180px;
+		background-color: #333;
+		color: floralwhite;
+		text-align: center;
+		padding: 5px 0;
+		border-radius: 4px;
+
+		/* Position the tooltip text */
+		position: absolute;
+		z-index: 1;
+		bottom: 125%;
+		left: 50%;
+		margin-left: -60px;
+
+		/* Fade in tooltip */
+		opacity: 0;
+		transition: opacity 0.3s;
+	}
+
+	.tooltip:hover .tooltiptext {
+		visibility: visible;
+		opacity: 1;
+	}
+
+	button {
+		background-color: #333;
+		color: floralwhite;
+		font-size: 1.5em;
+	}
+</style>
+
+<h1>Audio Dynamics Compressor</h1>
+
+<div id="mainPopup">
+
+<button id="onOff" data-active="false">Turn ON</button>
+<br/><br/>
+
+<input type="range" id="threshold" min="-100" max="0" value="-40">
+<div class="tooltip">
+	Threshold
+	<span class="tooltiptext">Volume level at which compression begins</span>
+</div>
+</input>
+<br/>
+
+<input type="range" id="ratio" min="1" max="20" step="0.5" value="8">
+<div class="tooltip">
+	Ratio
+	<span class="tooltiptext">Amount of volume reduction applied when over threshold</span>
+</div>
+</input>
+<br/>
+
+<input type="range" id="attack" min="0" max="1" step="0.01" value="0">
+<div class="tooltip">
+	Attack
+	<span class="tooltiptext">How quickly compression starts after going over threshold</span>
+</div>
+</input>
+<br/>
+
+<input type="range" id="release" min="0" max="1" step="0.01" value="0.15">
+<div class="tooltip">
+	Release
+	<span class="tooltiptext">How quickly compression stops after going back under threshold</span>
+</div>
+</input>
+<br/>
+
+<input type="range" id="gain" min="0.5" max="6" step="0.02" value="1">
+<div class="tooltip">
+	Volume
+	<span class="tooltiptext">Gain applied after compression</span>
+</div>
+</input>
+<br/>
+
+<!--
+<p>To shut this popup down, edit the manifest file and remove the "default popup" key. To edit it, just edit ext/page_action/page_action.html. The CSS is there, too.</p>
+-->
+
+</div>
+
+<script src="popup.js"></script>
