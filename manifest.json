@@ -14,15 +14,13 @@
     "page": "src/bg/background.html",
     "persistent": false
   },
-  "options_page": "src/options_custom/index.html",
+  "options_page": "src/options/index.html",
   "page_action": {
     "default_icon": "icons/icon48.png",
     "default_title": "Audio Dynamics Compressor",
     "default_popup": "src/page_action/page_action.html"
   },
-  "permissions": [
-    "activeTab"
-  ],
+  "permissions": [],
   "content_scripts": [
     {
       "matches": [
@@ -41,6 +39,7 @@
         "https://www.amazon.eu/gp/video*",
         "https://www.amazon.co.jp/gp/video*"
         ,
+        "https://cbs.com/*",
         "https://vimeo.com/*",
         "https://www.mixcloud.com/*"
         ,

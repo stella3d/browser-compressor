@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title id="title"></title>
+        <link rel="stylesheet" href="main.css">
+    </head>
+    <body>
+        <div class="header">Usage / Supported Sites</div>
+
+        For this first release, a handful of sites are explicitly supported, instead of working across everything.  
+        The reasons for this are multiple:
+        <ol>
+            <li>
+                This only works with HTML "audio" & "video" tags.</br>
+                Some sites (such as SoundCloud) use a custom setup that does not use these tags.
+            </li></br>
+            <li>
+                Some sites (like Steam or Crunchyroll) keep their actual media content on another domain (such as a static cdn)
+                Cross-Origin Resource Sharing (CORS) restrictions prevent this extension from accessing their audio.
+            </li></br>
+            <li>
+              Chrome's permission model for extensions makes doing content script injection on-demand for arbitrary sites tricky, and i haven't figured it out yet.
+            </li></br>
+            <li>
+            I don't have access to an account to test most paywalled streaming services
+            </li>
+        </ol>
+    
+        Wider site support is a top priority for future development. 
+        </br>
+        The list of currently supported sites is:
+        <ul>
+            <li class="bold">Twitch</li>
+            <li class="bold">Twitter/Periscope</li>
+            <li class="bold">Facebook</li>
+            <li class="bold">Amazon video</li>
+            <li class="bold">CBS All Access</li>
+            <li class="bold">Vimeo</li>
+            <li class="bold">Mixcloud</li>
+        </ul>
+        Direct links to files are also supported, for 
+        <ul>
+            <li class="bold">mp3/4</li>
+            <li class="bold">webm</li>
+            <li class="bold">ogg</li>
+        </ul>
+        Apologies for the inconvenience if your favorite isn't supported yet, this extension is very new.
+        </br></br>
+        <div>
+        </div>
+        <div class="header">Preferences</div>
+        </br>
+        <div>
+            There are currently no settings aside from those shown in the pop-up, but they will be here when added.
+        </div>
+        </br>
+        <div class="header">Information on Compression</div>
+        </br>
+        <div>
+            This extension allows you to apply 
+            <a href="https://en.wikipedia.org/wiki/Dynamic_range_compression">
+                dynamic range compression
+            </a> 
+            to audio on the web.  
+            </br></br>
+            Compression reduces the amount that volume varies , which can be more comfortable for media with a lot of variation.
+            </br></br>
+            <a href="https://en.wikipedia.org/wiki/Dynamic_range_compression#Controls_and_features">
+                This section
+            </a> 
+            of the wiki entry explains the common terms used in the controls, such as: 
+            <div class="boldmono">'threshold', 'ratio', 'attack', 'release'</div>
+
+        </div>
+
+    </body>
+</html>
