@@ -10,7 +10,7 @@ defaults = {
 compressor = {
 	audioContext: {},
 	mediaSource: {},
-	nodes: {
+	nodes: {				// web audio nodes
 		comp: {},
 		gain: {}
 	},
@@ -63,22 +63,6 @@ compressor = {
 		return [].slice.call(document.querySelectorAll('audio'));
 	},
 
-	// some common sites have more than one element, & can work with a bit of searching
-	tryGetSourceFromCommonVideoSites(videoElements) {
-		const href = window.location.href;
-		const multipleVideos = videoElements.length > 1;
-
-		console.log('compressor: trying to find audio from common video sites...');
-		if(href.includes('facebook.com/watch/' || href.match('facebook\.com\/.*\/videos\/[a-zA-Z0-9]*')) && multipleVideos)
-			return videoElements[0];
-		else if(href.includes('dailymotion.com/video') && multipleVideos)
-			return videoElements[0];
-		else if(href.includes('mixcloud.com/') && multipleVideos)
-			return videoElements[0];
-		else
-			return null;
-	},
-
 	isMediaElementPlaying(element) {
 		return (element.currentTime > 0 && !element.paused && !element.ended && element.readyState > 2);
 	},
@@ -105,7 +89,13 @@ compressor = {
 			if(audioElements.length > 2) 
 				element = audioElements.find(this.isMediaElementPlaying);
 
-			return element ? element : this.tryGetSourceFromCommonVideoSites(videoElements);
+			// if nothing is playing, default to the first of video or audio
+			if(!element && videoElements.length > 0)
+				element = videoElements[0];
+			if(!element && audioElements.length > 0)
+				element = audioElements[0];
+
+				return element;
 		}
 	},
 
@@ -129,6 +119,7 @@ compressor = {
 		}
 	},
 
+	// TODO - this needs to take settings instead of keeping the defaults in inject script
 	turnOn() {
 		if(this.enabled)
 			return true;
@@ -210,7 +201,7 @@ chrome.runtime.onMessage.addListener(
 		return;
 
 	  const cmdValue = request['value'];
-	  // console.log(`command: ${command}, value: ${cmdValue ? cmdValue : 'none'}`);
+	  console.log(`command: ${command}, value: ${cmdValue ? cmdValue : 'none'}`);
 
 	  switch(command) {
 		case 'compressorOn':

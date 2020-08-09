@@ -1,23 +1,7 @@
-function SendToCurrentTab(message, callback) {
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, message, callback);
-      });
-}
-
-function SendCommand(command, commandValue) {
-    SendToCurrentTab({do: command, value: commandValue});
-}
-
-function getState(callback) {
-    SendToCurrentTab({do: "getState"}, callback);
-}
-
-function getGainReduction(callback) {
-    SendToCurrentTab({do: "getGainReduction"}, callback);
-}
-
 onToggle = document.getElementById('onOff');
 onToggleLabel = document.getElementById('onOffLabel');
+tooltips = document.querySelectorAll('.tooltip');
+gainReductionLabel = document.getElementById('gainReductionLabel');
 
 sliders = {
     ratio: document.getElementById('ratio'),
@@ -27,111 +11,97 @@ sliders = {
     gain: document.getElementById('gain')
 }
 
-sliderLabels = [
-    document.querySelector('#ratio + div'),
-    document.querySelector('#threshold + div'),
-    document.querySelector('#attack + div'),
-    document.querySelector('#release + div'),
-    document.querySelector('#gain + div')
-]
-
-function grayLabelsOut() {
-    document.querySelectorAll('.tooltip').forEach((elem => {
-        if(elem && elem.classList)
-            elem.classList.add('inactive');
-    }));
+function SendToPage(message, callback) {
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, message, callback);
+      });
 }
 
-function unGrayLabels() {
-    document.querySelectorAll('.tooltip').forEach((elem => {
-        if(elem && elem.classList)
-            elem.classList.remove('inactive');
-    }));
+function SendCommand(command, data) {   
+    SendToPage({do: command, value: data});
 }
 
-currentGainReduction = 0;
-reductionElement = document.getElementById('reductionValue');
-pollGainInterval = null;
-
-function setPollGainInterval() {
-    // poll the gain reduction of the compressor at ~25fps
-    const pollGainMilliseconds = 40;
-    return setInterval(() => {
-        getGainReduction((response) => {
-            if(!response) return;
-            const val = response['value'];
-            if(!val) return;
-            
-            currentGainReduction = val;
-            reductionElement.innerHTML = `${val.toFixed(2)} Decibels`;
-        });
-    }, pollGainMilliseconds);
+function getState(callback) {
+    SendToPage({do: "getState"}, callback);
 }
 
-function setupOnOffButton() {
-    console.log('setup onofff');
-    const offLabel = '........ Off';
+function getGainReduction(callback) {
+    SendToPage({do: "getGainReduction"}, callback);
+}
 
+function setupCompressionToggle() {
     onToggle.onclick = () => {
         if(onToggle.checked) {
-            unGrayLabels();
-            onToggleLabel.innerHTML = 'On';
-
-            SendToCurrentTab({ do : "compressorOn" }, (response) => {
-                if(!response) 
-                    return;
-                const success = response['success'];
-                if(success) {
-                    pollGainInterval = setPollGainInterval();
-                }
-                else {
-                    onToggle.checked = false;    
-                    onToggleLabel.innerHTML = offLabel;
-                    grayLabelsOut();
-                }
+            SendToPage({ do : "compressorOn" }, (response) => {
+                if(!response || !response['success']) 
+                    setInactiveUI();
+                else
+                    setActiveUI();
             });
         } 
         else {
-            grayLabelsOut();
-            onToggleLabel.innerHTML = offLabel;
-            reductionElement.innerHTML = '-0.00 Decibels';
-            SendToCurrentTab({do : "compressorOff"});
-            clearInterval(pollGainInterval);
+            SendToPage({do : "compressorOff"});
+            setInactiveUI();
         }
     }
 }
 
-function setupRangeElement(rangeElement, callback) {
-    rangeElement.oninput = () => callback(rangeElement.value);
+function setupSliderUpdates() {
+    sliders.ratio.oninput = () => SendCommand("setRatio", sliders.ratio.value);
+    sliders.threshold.oninput = () => SendCommand("setThreshold", sliders.threshold.value);
+    sliders.attack.oninput = () => SendCommand("setAttack", sliders.attack.value);
+    sliders.release.oninput = () => SendCommand("setRelease", sliders.release.value);
+    sliders.gain.oninput = () => SendCommand("setGain", sliders.gain.value);
 }
 
-function setupSliderUpdates() {
-    setupRangeElement(sliders.ratio, (ratio) => SendCommand("setRatio", ratio));
-    setupRangeElement(sliders.threshold, (threshold) => SendCommand("setThreshold", threshold));
-    setupRangeElement(sliders.attack, (attack) => SendCommand("setAttack", attack));
-    setupRangeElement(sliders.release, (release) => SendCommand("setRelease", release));
-    setupRangeElement(sliders.gain, (gain) => SendCommand("setGain", gain));
+pollGainInterval = null;
+function setPollGainInterval() {
+    // poll the gain reduction of the compressor at 20fps
+    const pollGainMilliseconds = 50;
+    pollGainInterval = setInterval(() => {
+        getGainReduction((response) => {
+            if(!response) return;
+            const val = response['value'];
+            if(!val) return;
+
+            gainReductionLabel.innerHTML = `${val.toFixed(2)} Decibels`;
+        });
+    }, pollGainMilliseconds);
+}
+
+function setActiveUI() {
+    onToggle.checked = true;    
+    onToggleLabel.innerHTML = 'On';
+    tooltips.forEach((elem => elem?.classList.remove('inactive')));
+    setPollGainInterval();
+}
+
+function setInactiveUI() {
+    clearInterval(pollGainInterval);
+    const offLabel = '........ Off';
+    onToggleLabel.innerHTML = offLabel;
+    tooltips.forEach((elem => elem?.classList.add('inactive')));
+    onToggle.checked = false;    
+    gainReductionLabel.innerHTML = '-0.00 Decibels';
+}
+
+function setActiveFailedUI() {
+    const errLabel = '........Error';
+    onToggleLabel.innerHTML = offLabel;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    setupOnOffButton();
+    setupCompressionToggle();
     setupSliderUpdates();
 
     // sync popup UI state with the browser page's compressor when opened
     getState((response) => {
-        if(!response)
-        {
-            onToggleLabel.innerHTML = offLabel;
+        if(!response || !response['enabled']) {
+            setInactiveUI();
             return;
         }
         
-        const enabled = response['enabled'];
-        onToggle.checked = enabled;
-        if(enabled) {
-            pollGainInterval = setPollGainInterval();
-            onToggleLabel.innerHTML = 'On';
-        }
-
+        setActiveUI();
         const comp = response['comp'];
         if(!comp)
             return;
@@ -140,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sliders.threshold.value = comp['threshold'];
         sliders.attack.value = comp['attack'];
         sliders.release.value = comp['release'];
-        
         sliders.gain.value = comp['gain'];
     });
 });
