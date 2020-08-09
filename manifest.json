@@ -21,7 +21,7 @@
     "default_title": "Audio Compressor Controls",
     "default_popup": "src/page_action/page_action.html"
   },
-  "permissions": [],
+  "permissions": [ ],
   "content_scripts": [
     {
       "matches": [
@@ -35,10 +35,8 @@
         "https://amazon.com/gp/video*",
         "https://www.amazon.com/gp/video*",
         "https://www.amazon.com.au/gp/video*",
-        "https://www.amazon.com.mx/gp/video*",
         "https://www.amazon.ca/gp/video*",
-        "https://www.amazon.eu/gp/video*",
-        "https://www.amazon.co.jp/gp/video*"
+        "https://www.amazon.eu/gp/video*"
         ,
         "https://cbs.com/*",
         "https://vimeo.com/*",
