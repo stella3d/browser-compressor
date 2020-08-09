@@ -10,7 +10,7 @@
 		width: 148px;
 	}
 
-	#mainPopup {
+	#spacer {
 		padding: 10px;
 		height: 136px;
 		width: 250px;
@@ -123,32 +123,25 @@
 
 <h1>Audio Dynamics Compressor</h1>
 
-<div id="mainPopup">
-
-<div>
-
+<div id="spacer"><div>
 <div class="onoffswitch">
 	<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onOff" tabindex="0" data-active="false">
 	<label class="onoffswitch-label" for="onOff" id="onOffLabel"></label>
 </div>
 <div id="gainReductionLabel">0 Db</div>
-</div>
-
-<br/>
+</div><br/>
 
 <input type="range" id="threshold" min="-100" max="0" value="-40"/>
 <div class="tooltip inactive">
 	Threshold
 	<span class="tooltiptext">Volume level at which compression begins</span>
-</div>
-<br/>
+</div><br/>
 
 <input type="range" id="ratio" min="1" max="20" step="0.5" value="8"/>
 <div class="tooltip inactive">
 	Ratio
 	<span class="tooltiptext">Amount of volume reduction applied when over threshold</span>
-</div>
-<br/>
+</div><br/>
 
 <!-- web audio supports a range of 0-1 for release, but got attack & release 
 	we use half, 0.5, for a higher precision slider -->
@@ -157,16 +150,14 @@
 	Attack
 	<span class="tooltiptext">How quickly volume is lowered after going over threshold</span>
 </div>
-</input>
-<br/>
+</input><br/>
 
 <input type="range" id="release" min="0.01" max="0.5" step="0.005" value="0.15">
 <div class="tooltip inactive">
 	Release
 	<span class="tooltiptext">How quickly voume is restored after going under threshold</span>
 </div>
-</input>
-<br/>
+</input><br/>
 
 <!-- gain can go much higher but we bound it to 5 so it's harder for the user to accidentally blow it out -->
 <input type="range" id="gain" min="0.5" max="5" step="0.02" value="1">
@@ -174,15 +165,7 @@
 	Volume
 	<span class="tooltiptext">Gain applied after compression</span>
 </div>
-</input>
-<br/>
-
-
-<!--
-<p>To shut this popup down, edit the manifest file and remove the "default popup" key. 
-	To edit it, just edit ext/page_action/page_action.html. The CSS is there, too.</p>
--->
-
+</input><br/>
 </div>
 
 <script src="popup.js"></script>
