@@ -27,36 +27,74 @@ sliders = {
     gain: document.getElementById('gain')
 }
 
+sliderLabels = [
+    document.querySelector('#ratio + div'),
+    document.querySelector('#threshold + div'),
+    document.querySelector('#attack + div'),
+    document.querySelector('#release + div'),
+    document.querySelector('#gain + div')
+]
+
+function grayLabelsOut() {
+    document.querySelectorAll('.tooltip').forEach((elem => {
+        if(elem && elem.classList)
+            elem.classList.add('inactive');
+    }));
+}
+
+function unGrayLabels() {
+    document.querySelectorAll('.tooltip').forEach((elem => {
+        if(elem && elem.classList)
+            elem.classList.remove('inactive');
+    }));
+}
+
 currentGainReduction = 0;
 reductionElement = document.getElementById('reductionValue');
 pollGainInterval = null;
 
 function setPollGainInterval() {
-    // poll the gain reduction of the compressor at 30fps
-    pollGainInterval = setInterval(() => {
+    // poll the gain reduction of the compressor at ~25fps
+    const pollGainMilliseconds = 40;
+    return setInterval(() => {
         getGainReduction((response) => {
+            if(!response) return;
             const val = response['value'];
-            if(!val)
-                return;
+            if(!val) return;
             
             currentGainReduction = val;
-            reductionElement.innerHTML = `${val.toFixed(2)} Db`;
+            reductionElement.innerHTML = `${val.toFixed(2)} Decibels`;
         });
-    }, 33);
+    }, pollGainMilliseconds);
 }
 
 function setupOnOffButton() {
+    const offLabel = '........ Off';
+    onToggle.innerHTML = onToggle.checked ? 'On' : offLabel;
+
     onToggle.onclick = () => {
         if(onToggle.checked) {
-            onToggleLabel.innerHTML = "On";
-            SendToCurrentTab({ do : "compressorOn" }, (onResponse) => {
-                const succeeded = onResponse['success'];
+            unGrayLabels();
+            onToggleLabel.innerHTML = 'On';
+
+            SendToCurrentTab({ do : "compressorOn" }, (response) => {
+                if(!response) 
+                    return;
+                const success = response['success'];
+                if(success) {
+                    pollGainInterval = setPollGainInterval();
+                }
+                else {
+                    onToggle.checked = false;    
+                    onToggleLabel.innerHTML = offLabel;
+                    grayLabelsOut();
+                }
             });
-            setPollGainInterval();
         } 
         else {
-            onToggleLabel.innerHTML = "Off";
-            reductionElement.innerHTML = '0 Db compression';
+            grayLabelsOut();
+            onToggleLabel.innerHTML = offLabel;
+            reductionElement.innerHTML = '-0.00 Decibels';
             SendToCurrentTab({do : "compressorOff"});
             clearInterval(pollGainInterval);
         }
@@ -84,10 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!response)
             return;
         
-        const enabled = response['enabled'];
-        onToggle.checked = enabled;
-        if(enabled)
-            setPollGainInterval();
+        onToggle.checked = response['enabled'];
 
         const comp = response['comp'];
         if(!comp)
