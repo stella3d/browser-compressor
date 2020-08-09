@@ -17,21 +17,33 @@
   "options_page": "src/options_custom/index.html",
   "page_action": {
     "default_icon": "icons/icon48.png",
-    "default_title": "page action demo",
+    "default_title": "Audio Dynamics Compressor",
     "default_popup": "src/page_action/page_action.html"
   },
-  "permissions": [],
+  "permissions": [
+    "activeTab"
+  ],
   "content_scripts": [
     {
       "matches": [
-        "https://www.youtube.com/watch?v=*",
+        "https://youtube.com/watch*",
+        "https://www.youtube.com/watch*",
         "https://www.twitch.tv/videos/*",
-        "https://twitter.com/*/status/*",
-        "https://twitter.com/search?*",
+        "https://twitter.com/*",
+        "https://www.pscp.tv/*",
+        "https://www.facebook.com/*",
         "https://vimeo.com/*",
-        "https://www.dailymotion.com/video/*"
+        "https://www.dailymotion.com/video/*",
+        "https://www.mixcloud.com/*"
         ,
-        "https://hwcdn.libsyn.com/*"
+        "http://*:*/*.mp3",
+        "http://*:*/*.mp4",
+        "http://*:*/*.ogg",
+        "http://*:*/*.webm",
+        "https://*:*/*.mp3",
+        "https://*:*/*.mp4",
+        "https://*:*/*.ogg",
+        "https://*:*/*.webm"
       ],
       "js": [
         "src/inject/inject.js"
