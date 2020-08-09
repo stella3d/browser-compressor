@@ -69,8 +69,8 @@ function setPollGainInterval() {
 }
 
 function setupOnOffButton() {
+    console.log('setup onofff');
     const offLabel = '........ Off';
-    onToggle.innerHTML = onToggle.checked ? 'On' : offLabel;
 
     onToggle.onclick = () => {
         if(onToggle.checked) {
@@ -120,9 +120,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // sync popup UI state with the browser page's compressor when opened
     getState((response) => {
         if(!response)
+        {
+            onToggleLabel.innerHTML = offLabel;
             return;
+        }
         
-        onToggle.checked = response['enabled'];
+        const enabled = response['enabled'];
+        onToggle.checked = enabled;
+        if(enabled) {
+            pollGainInterval = setPollGainInterval();
+            onToggleLabel.innerHTML = 'On';
+        }
 
         const comp = response['comp'];
         if(!comp)
