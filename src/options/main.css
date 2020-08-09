@@ -4,6 +4,11 @@ body {
 
 .header {
     font-size: 24px;
+    font-weight: bolder;
+}
+
+.subhead {
+    font-size: 18px;
     font-weight: bold;
 }
 
