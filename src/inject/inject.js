@@ -56,30 +56,22 @@ class MediaCompressor {
 	}
 
 	setRatio(ratio) {
-		if(this.ready)
-			this.nodes.comp.ratio.setValueAtTime(ratio, this.audioContext.currentTime);
+		this.nodes.comp.ratio.setValueAtTime(ratio, this.audioContext.currentTime);
 	}
 	setThreshold(threshold) {
-		if(this.ready)
-			this.nodes.comp.threshold.setValueAtTime(threshold, this.audioContext.currentTime);
+		this.nodes.comp.threshold.setValueAtTime(threshold, this.audioContext.currentTime);
 	}
 	setAttack(attack) {
-		if(this.ready)
-			this.nodes.comp.attack.setValueAtTime(attack, this.audioContext.currentTime);
+		this.nodes.comp.attack.setValueAtTime(attack, this.audioContext.currentTime);
 	}
 	setRelease(release) {
-		if(this.ready)
-			this.nodes.comp.release.setValueAtTime(release, this.audioContext.currentTime);
+		this.nodes.comp.release.setValueAtTime(release, this.audioContext.currentTime);
 	}
 	setGain(gain) {
-		if(this.ready)
-			this.nodes.gain.gain.setValueAtTime(gain, this.audioContext.currentTime);
+		this.nodes.gain.gain.setValueAtTime(gain, this.audioContext.currentTime);
 	}
 	
 	getState() {
-		if(!this.ready)
-			return { enabled: false };
-		
 		const comp = this.nodes.comp;
 		return {
 			enabled: this.enabled,
@@ -126,22 +118,26 @@ function tryFindSingleMediaSource() {
 	}
 }
 
+
 compressor = null;			// lazy-instantiated 
 // handle messages coming from the popup controls
 chrome.runtime.onMessage.addListener(
 	(request, sender, sendResponse) => {
+	  const onCmd = 'compressorOn';
 	  const command = request['do'];
-	  if(!command) 
+	  // unless we've instantiated, all other commands are invalid
+	  if(!command || (command.includes('set') && !compressor)) {
 		return;
-	
+	  }
+
 	  const cmdValue = request['value'];
 	  //console.log(`command: ${command}, value: ${cmdValue ? cmdValue : 'none'}`);
 	  switch(command) {
-		case 'compressorOn':
+		case onCmd:
 			if(compressor) {
 				sendResponse({ success: compressor.turnOn(cmdValue) });
 			} else {
-				const element = search.tryFindSingleMediaSource();
+				const element = tryFindSingleMediaSource();
 				if(!element) {
 					sendResponse({ success: false });
 					return;
@@ -165,9 +161,13 @@ chrome.runtime.onMessage.addListener(
 		case 'setGain':
 			compressor.setGain(cmdValue); break;
 		case 'getState':
-			sendResponse(compressor.getState()); break;
+			sendResponse(compressor ? compressor.getState() : { enabled: false });
+			break;
 		case 'getGainReduction':
-			sendResponse({value: compressor.getGainReduction()}); break;
+			sendResponse({value: compressor ? compressor.getGainReduction() : 0 }); 
+			break;
 	  }
 	});
-	
+
+// this is what makes the popup appear ??
+chrome.extension.sendMessage({}, (response) => {});
