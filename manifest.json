@@ -16,44 +16,10 @@
     "persistent": false
   },
   "options_page": "src/options/index.html",
-  "page_action": {
+  "browser_action": {
     "default_icon": "icons/icon48.png",
     "default_title": "Audio Compressor Controls",
     "default_popup": "src/page_action/page_action.html"
   },
-  "permissions": [ ],
-  "content_scripts": [
-    {
-      "matches": [
-        "https://youtube.com/watch*",
-        "https://www.youtube.com/watch*",
-        "https://www.twitch.tv/*",
-        "https://twitter.com/*",
-        "https://www.pscp.tv/*",
-        "https://www.facebook.com/*"
-        ,
-        "https://amazon.com/gp/video*",
-        "https://www.amazon.com/gp/video*",
-        "https://www.amazon.com.au/gp/video*",
-        "https://www.amazon.ca/gp/video*",
-        "https://www.amazon.eu/gp/video*"
-        ,
-        "https://cbs.com/*",
-        "https://vimeo.com/*",
-        "https://www.mixcloud.com/*"
-        ,
-        "http://*:*/*.mp3",
-        "http://*:*/*.mp4",
-        "http://*:*/*.ogg",
-        "http://*:*/*.webm",
-        "https://*:*/*.mp3",
-        "https://*:*/*.mp4",
-        "https://*:*/*.ogg",
-        "https://*:*/*.webm"
-      ],
-      "js": [
-        "src/inject/inject.js"
-      ]
-    }
-  ]
+  "permissions": [ "activeTab" ]
 }

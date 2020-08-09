@@ -11,10 +11,20 @@ sliders = {
     gain: document.getElementById('gain')
 }
 
+function getActiveTab(callback) {
+    chrome.tabs.query({active: true, currentWindow: true}, callback);
+}
+
 function SendToPage(message, callback) {
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    getActiveTab((tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, message, callback);
-      });
+    });
+}
+
+function executeContentScript(sciptFilename, callback) {
+    getActiveTab((tabs) => {
+        chrome.tabs.executeScript(tabs[0].id, {file: sciptFilename}, callback);
+    });
 }
 
 function SendCommand(command, data, callback = null) {   
@@ -40,9 +50,13 @@ function getSettingsFromUI() {
     }
 }
 
+hasInjected = false;
 function setupCompressionToggle() {
     onToggle.onclick = () => {
         if(onToggle.checked) {
+            if(!hasInjected)
+                executeContentScript('src/inject/inject.js');
+
             SendCommand("compressorOn", getSettingsFromUI(), (response) => {
                 if(!response || !response['success']) 
                     setInactiveUI();
