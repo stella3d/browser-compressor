@@ -15,20 +15,18 @@ Sliders control the parameters of the effect.
 
 There is a very small (less than 10ms) amount of latency inherent to WebAudio, but i have not noticed it when watching video - this is less than a frame.
 
-# Supported Sites
+# Website Support
 
 For this first release, a handful of sites are explicitly supported, instead of working across everything. 
 
-The reasons for this are multiple:
+Among the reasons for this are:
 * This only works with HTML "audio" & "video" tags. Some sites (such as SoundCloud) use a custom setup that does not use these tags.
 
 * Some sites (like Steam or Crunchyroll) keep their actual media content on another domain (such as a static cdn) Cross-Origin Resource Sharing (CORS) restrictions prevent this extension from accessing their audio.
 
 * Chrome's permission model for extensions makes doing content script injection on-demand for arbitrary sites tricky, and i haven't figured it out yet.
 
-* I don't have access to an account to test most paywalled streaming services
-
-The list of **currently supported sites** is:
+### Currently Supported
 * Twitch
 * Twitter/Periscope
 * Facebook
