@@ -243,15 +243,10 @@ chrome.runtime.onMessage.addListener(
 	});
 
 chrome.extension.sendMessage({}, (response) => {
-	console.log('hello from inject.js message response');
+	//console.log('hello from inject.js message response');
 	var readyStateCheckInterval = setInterval(() => {
 		loggedInteractive = false;
 		switch(document.readyState) {
-			case 'interactive':
-				if(!loggedInteractive)
-					console.log('readyState is interactive');
-				loggedInteractive = true;
-				break;
 			case 'complete': {
 					console.log('readyState is complete');
 					clearInterval(readyStateCheckInterval);
