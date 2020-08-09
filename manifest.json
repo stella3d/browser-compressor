@@ -6,7 +6,8 @@
   "homepage_url": "https:/github.com/stella3d/browser-compressor",
   "icons": {
     "16": "icons/icon16.png",
-    "19": "icons/icon16.png",
+    "19": "icons/icon19.png",
+    "38": "icons/icon38.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
