@@ -123,17 +123,13 @@ compressor = null;			// lazy-instantiated
 // handle messages coming from the popup controls
 chrome.runtime.onMessage.addListener(
 	(request, sender, sendResponse) => {
-	  const onCmd = 'compressorOn';
 	  const command = request['do'];
-	  // unless we've instantiated, all other commands are invalid
-	  if(!command || (command.includes('set') && !compressor)) {
-		return;
-	  }
+	  if(!command) 
+	  	return;
 
 	  const cmdValue = request['value'];
-	  //console.log(`command: ${command}, value: ${cmdValue ? cmdValue : 'none'}`);
 	  switch(command) {
-		case onCmd:
+		case 'compressorOn':
 			if(compressor) {
 				sendResponse({ success: compressor.turnOn(cmdValue) });
 			} else {
@@ -149,25 +145,25 @@ chrome.runtime.onMessage.addListener(
 			}
 			break;
 		case 'compressorOff':
-			compressor.turnOff(); break;
+			compressor?.turnOff(); break;
 		case 'setRatio':
-			compressor.setRatio(cmdValue); break;
+			compressor?.setRatio(cmdValue); break;
 		case 'setThreshold':
-			compressor.setThreshold(cmdValue); break;
+			compressor?.setThreshold(cmdValue); break;
 		case 'setAttack':
-			compressor.setAttack(cmdValue); break;
+			compressor?.setAttack(cmdValue); break;
 		case 'setRelease':
-			compressor.setRelease(cmdValue); break;
+			compressor?.setRelease(cmdValue); break;
 		case 'setGain':
-			compressor.setGain(cmdValue); break;
+			compressor?.setGain(cmdValue); break;
 		case 'getState':
-			sendResponse(compressor ? compressor.getState() : { enabled: false });
+			sendResponse(compressor ? compressor?.getState() : { enabled: false });
 			break;
 		case 'getGainReduction':
-			sendResponse({value: compressor ? compressor.getGainReduction() : 0 }); 
+			sendResponse({value: compressor ? compressor?.getGainReduction() : 0 }); 
 			break;
 	  }
 	});
 
-// this is what makes the popup appear ??
+// this is one of the things that makes the popup appear ??
 chrome.extension.sendMessage({}, (response) => {});

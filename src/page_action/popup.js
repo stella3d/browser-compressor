@@ -50,19 +50,27 @@ function getSettingsFromUI() {
     }
 }
 
+function requestCompressorOn() {
+    SendCommand("compressorOn", getSettingsFromUI(), (response) => {
+        if(!response || !response['success']) 
+            setInactiveUI();
+        else
+            setActiveUI();
+    });
+}
+
 hasInjected = false;
 function setupCompressionToggle() {
     onToggle.onclick = () => {
         if(onToggle.checked) {
-            if(!hasInjected)
-                executeContentScript('src/inject/inject.js');
-
-            SendCommand("compressorOn", getSettingsFromUI(), (response) => {
-                if(!response || !response['success']) 
-                    setInactiveUI();
-                else
-                    setActiveUI();
-            });
+            if(!hasInjected) {
+                // need to finish injecting before requesting compression on can succeed
+                executeContentScript('src/inject/inject.js', (results) => {
+                    hasInjected = true;
+                    requestCompressorOn();
+                });
+            }
+            requestCompressorOn();
         } 
         else {
             SendToPage({do : "compressorOff"});
