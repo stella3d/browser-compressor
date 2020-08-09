@@ -27,21 +27,24 @@ sliders = {
     gain: document.getElementById('gain')
 }
 
+currentGainReduction = 0;
+reductionElement = document.getElementById('reductionValue');
+pollGainInterval = null;
+
 function setPollGainInterval() {
-    console.log("set poll");
     // poll the gain reduction of the compressor at 30fps
     pollGainInterval = setInterval(() => {
         getGainReduction((response) => {
             const val = response['value'];
+            if(!val)
+                return;
+            
             currentGainReduction = val;
             reductionElement.innerHTML = `${val.toFixed(3)} Db`;
         });
     }, 33);
 }
 
-currentGainReduction = 0;
-reductionElement = document.getElementById('reductionValue');
-pollGainInterval = null;
 function setupOnOffButton() {
     onToggle.onclick = () => {
         if(onToggle.checked) {
@@ -51,6 +54,7 @@ function setupOnOffButton() {
         } 
         else {
             onToggleLabel.innerHTML = "Off";
+            reductionElement.innerHTML = '0 Db';
             SendToCurrentTab({do : "compressorOff"}, console.log);
             clearInterval(pollGainInterval);
         }
@@ -75,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // sync popup UI state with the browser page's compressor when opened
     getState((response) => {
-        console.log(response);
         if(!response)
             return;
         

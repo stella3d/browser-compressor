@@ -2,7 +2,7 @@ defaults = {
 	ratio: 8,
 	threshold: -40,
 	attack: 0,
-	release: 0.2,
+	release: 0.1,
 	knee: 30,
 	gain: 1
 };
@@ -66,10 +66,21 @@ compressor = {
 	// some common sites have more than one element, & can work with a bit of searching
 	tryGetSourceFromCommonVideoSites(videoElements) {
 		const href = window.location.href;
-		if(href.includes('dailymotion.com/video') && videoElements.length == 2)
+		const multipleVideos = videoElements.length > 1;
+
+		console.log('compressor: trying to find audio from common video sites...');
+		if(href.includes('facebook.com/watch/' || href.match('facebook\.com\/.*\/videos\/[a-zA-Z0-9]*')) && multipleVideos)
+			return videoElements[0];
+		else if(href.includes('dailymotion.com/video') && multipleVideos)
+			return videoElements[0];
+		else if(href.includes('mixcloud.com/') && multipleVideos)
 			return videoElements[0];
 		else
 			return null;
+	},
+
+	isMediaElementPlaying(element) {
+		return (element.currentTime > 0 && !element.paused && !element.ended && element.readyState > 2);
 	},
 
 	// we can skip asking the user for input if there is only one choice, or it's obvious
@@ -79,7 +90,6 @@ compressor = {
 
 		if(videoElements.length == 1 && audioElements.length == 0)
 		{
-			console.log('chose single video element');
 			return videoElements[0];
 		}
 		else if(audioElements.length == 1 && videoElements.length == 0)
@@ -89,8 +99,17 @@ compressor = {
 		}
 		else
 		{
-			return this.tryGetSourceFromCommonVideoSites(videoElements);
+			let element = null;
+			// default to the video that is playing
+			if(videoElements.length > 2) 
+				element = videoElements.find(isMediaElementPlaying);
+
+			return element ? element : this.tryGetSourceFromCommonVideoSites(videoElements);
 		}
+	},
+
+	getPlayingMediaElement(elements) {
+		elements.find(isMediaElementPlaying);
 	},
 
 	turnOff() {
@@ -190,8 +209,8 @@ chrome.runtime.onMessage.addListener(
 		return;
 
 	  const cmdValue = request['value'];
-	  console.log(`command: ${command}, value: ${cmdValue ? cmdValue : 'none'}`);
-		
+	  // console.log(`command: ${command}, value: ${cmdValue ? cmdValue : 'none'}`);
+
 	  switch(command) {
 		case 'compressorOn':
 			compressor.turnOn();
@@ -224,10 +243,14 @@ chrome.runtime.onMessage.addListener(
 	});
 
 chrome.extension.sendMessage({}, (response) => {
+	console.log('hello from inject.js message response');
 	var readyStateCheckInterval = setInterval(() => {
+		loggedInteractive = false;
 		switch(document.readyState) {
 			case 'interactive':
+				if(!loggedInteractive)
 					console.log('readyState is interactive');
+				loggedInteractive = true;
 				break;
 			case 'complete': {
 					console.log('readyState is complete');
