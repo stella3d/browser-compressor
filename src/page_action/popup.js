@@ -40,7 +40,7 @@ function setPollGainInterval() {
                 return;
             
             currentGainReduction = val;
-            reductionElement.innerHTML = `${val.toFixed(3)} Db`;
+            reductionElement.innerHTML = `${val.toFixed(2)} Db`;
         });
     }, 33);
 }
@@ -54,7 +54,7 @@ function setupOnOffButton() {
         } 
         else {
             onToggleLabel.innerHTML = "Off";
-            reductionElement.innerHTML = '0 Db';
+            reductionElement.innerHTML = '0 Db compression';
             SendToCurrentTab({do : "compressorOff"}, console.log);
             clearInterval(pollGainInterval);
         }
