@@ -131,37 +131,37 @@
 <div id="gainReductionLabel">0 Db</div>
 </div><br/>
 
-<input type="range" id="threshold" min="-100" max="0" value="-40"/>
-<div class="tooltip inactive">
+<input type="range" id="threshold" min="-100" max="0" value="-40" aria-labelledby="thresholdLabel"/>
+<div class="tooltip inactive" id="thresholdLabel">
 	Threshold
 	<span class="tooltiptext">Volume level at which compression begins</span>
 </div><br/>
 
-<input type="range" id="ratio" min="1" max="20" step="0.5" value="8"/>
-<div class="tooltip inactive">
+<input type="range" id="ratio" min="1" max="20" step="0.5" value="8" aria-labelledby="ratioLabel"/>
+<div class="tooltip inactive" id="ratioLabel">
 	Ratio
 	<span class="tooltiptext">Amount of volume reduction applied when over threshold</span>
 </div><br/>
 
 <!-- web audio supports a range of 0-1 for release, but got attack & release 
 	we use half, 0.5, for a higher precision slider -->
-<input type="range" id="attack" min="0" max="0.5" step="0.005" value="0">
-<div class="tooltip inactive">
+<input type="range" id="attack" min="0" max="0.5" step="0.005" value="0" aria-labelledby="attackLabel">
+<div class="tooltip inactive" id="attackLabel">
 	Attack
 	<span class="tooltiptext">How quickly volume is lowered after going over threshold</span>
 </div>
 </input><br/>
 
-<input type="range" id="release" min="0.01" max="0.5" step="0.005" value="0.15">
-<div class="tooltip inactive">
+<input type="range" id="release" min="0.01" max="0.5" step="0.005" value="0.15" aria-labelledby="releaseLabel">
+<div class="tooltip inactive" id="releaseLabel">
 	Release
 	<span class="tooltiptext">How quickly voume is restored after going under threshold</span>
 </div>
 </input><br/>
 
 <!-- gain can go much higher but we bound it to 5 so it's harder for the user to accidentally blow it out -->
-<input type="range" id="gain" min="0.5" max="5" step="0.02" value="1">
-<div class="tooltip inactive">
+<input type="range" id="gain" min="0.5" max="5" step="0.02" value="1" aria-labelledby="gainLabel">
+<div class="tooltip inactive" id="gainLabel">
 	Volume
 	<span class="tooltiptext">Gain applied after compression</span>
 </div>
