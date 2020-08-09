@@ -2,7 +2,7 @@
   "name": "Audio Dynamics Compressor",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "Smooth out uneven audio volumes in media",
+  "description": "Smooth out uneven audio volumes in media,  make loud parts of media quieter.",
   "homepage_url": "https:/github.com/stella3d/browser-compressor",
   "icons": {
     "16": "icons/icon16.png",
@@ -12,13 +12,13 @@
     "128": "icons/icon128.png"
   },
   "background": {
-    "page": "src/bg/background.html",
+    "scripts": ["src/bg/background.js"],
     "persistent": false
   },
   "options_page": "src/options/index.html",
   "page_action": {
     "default_icon": "icons/icon48.png",
-    "default_title": "Audio Dynamics Compressor",
+    "default_title": "Audio Compressor Controls",
     "default_popup": "src/page_action/page_action.html"
   },
   "permissions": [],
