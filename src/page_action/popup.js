@@ -5,7 +5,7 @@ function SendToCurrentTab(message, callback) {
 }
 
 function SendCommand(command, commandValue) {
-    SendToCurrentTab({do: command, value: commandValue}, console.log);
+    SendToCurrentTab({do: command, value: commandValue});
 }
 
 function getState(callback) {
@@ -49,13 +49,15 @@ function setupOnOffButton() {
     onToggle.onclick = () => {
         if(onToggle.checked) {
             onToggleLabel.innerHTML = "On";
-            SendToCurrentTab({ do : "compressorOn" }, console.log);
+            SendToCurrentTab({ do : "compressorOn" }, (onResponse) => {
+                const succeeded = onResponse['success'];
+            });
             setPollGainInterval();
         } 
         else {
             onToggleLabel.innerHTML = "Off";
             reductionElement.innerHTML = '0 Db compression';
-            SendToCurrentTab({do : "compressorOff"}, console.log);
+            SendToCurrentTab({do : "compressorOff"});
             clearInterval(pollGainInterval);
         }
     }
@@ -82,7 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!response)
             return;
         
-        onToggle.checked = response['enabled'];
+        const enabled = response['enabled'];
+        onToggle.checked = enabled;
+        if(enabled)
+            setPollGainInterval();
 
         const comp = response['comp'];
         if(!comp)

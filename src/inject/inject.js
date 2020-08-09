@@ -94,7 +94,6 @@ compressor = {
 		}
 		else if(audioElements.length == 1 && videoElements.length == 0)
 		{
-			console.log('chose single audio element');
 			return audioElements[0];
 		}
 		else
@@ -102,7 +101,9 @@ compressor = {
 			let element = null;
 			// default to the video that is playing
 			if(videoElements.length > 2) 
-				element = videoElements.find(isMediaElementPlaying);
+				element = videoElements.find(this.isMediaElementPlaying);
+			if(audioElements.length > 2) 
+				element = audioElements.find(this.isMediaElementPlaying);
 
 			return element ? element : this.tryGetSourceFromCommonVideoSites(videoElements);
 		}
@@ -130,15 +131,14 @@ compressor = {
 
 	turnOn() {
 		if(this.enabled)
-			return;
+			return true;
 
 		if(!this.ready) {
-			// TODO - genericise the ability to find the media element so it works across many sites
 			const element = this.tryFindSingleMediaSource();
 			console.log("media element audio source", element);
 			if(element != null)
 				this.initialize(element);		
-			return;
+			return this.ready;
 		}
 
 		try {
@@ -151,6 +151,7 @@ compressor = {
 		catch(error) {
 			console.error(error);
 		}
+		return this.ready;
 	},
 
 	setRatio(ratio) {
@@ -213,7 +214,8 @@ chrome.runtime.onMessage.addListener(
 
 	  switch(command) {
 		case 'compressorOn':
-			compressor.turnOn();
+			const on = compressor.turnOn();
+			sendResponse({success: on});
 			break;
 		case 'compressorOff':
 			compressor.turnOff();
