@@ -1,106 +1,63 @@
-defaults = {
-	ratio: 8,
-	threshold: -40,
-	attack: 0,
-	release: 0.1,
-	knee: 30,
-	gain: 1
-};
-
 compressor = {
 	audioContext: {},
 	mediaSource: {},
-	nodes: {				// web audio nodes
-		comp: {},
-		gain: {}
+	nodes: {					// web audio nodes
+		comp: {}, gain: {}
 	},
 	ready: false,
 	enabled: false,
 
-	createCompressorNode(audioCtx) {
+	createCompressorNode(audioCtx, settings) {
 		let comp = audioCtx.createDynamicsCompressor();
-		comp.threshold.setValueAtTime(defaults.threshold, audioCtx.currentTime);
-		comp.ratio.setValueAtTime(defaults.ratio, audioCtx.currentTime);
-		comp.attack.setValueAtTime(defaults.attack, audioCtx.currentTime);
-		comp.release.setValueAtTime(defaults.release, audioCtx.currentTime);
-		comp.knee.setValueAtTime(defaults.knee, audioCtx.currentTime);
-		this.nodes.comp = comp;
+		comp.threshold.setValueAtTime(settings.threshold, audioCtx.currentTime);
+		comp.ratio.setValueAtTime(settings.ratio, audioCtx.currentTime);
+		comp.attack.setValueAtTime(settings.attack, audioCtx.currentTime);
+		comp.release.setValueAtTime(settings.release, audioCtx.currentTime);
+		comp.knee.setValueAtTime(settings.knee, audioCtx.currentTime);
 		return comp;
 	},
 
-	createGainNode(audioCtx) {
+	createGainNode(audioCtx, settings) {
 		this.nodes.gain = audioCtx.createGain();
-		this.nodes.gain.gain.setValueAtTime(defaults.gain, audioCtx.currentTime);
+		this.nodes.gain.gain.setValueAtTime(settings.gain, audioCtx.currentTime);
 		return this.nodes.gain;
 	},
 
-	initialize(mediaElement) {
-		let aContext = new AudioContext();
-		this.mediaSource = aContext.createMediaElementSource(mediaElement);
-		this.mediaSource.disconnect();
-
-		const compressor = this.createCompressorNode(aContext);
-		const gain = this.createGainNode(aContext);
-		this.mediaSource.connect(compressor);
-		compressor.connect(gain);
-		gain.connect(aContext.destination);
-
-		this.audioContext = aContext;
-		this.ready = true;
-		this.enabled = true;
-	},
-
-	getVideoElements() {
-		return [].slice.call(document.querySelectorAll('video'));
-	},
-
-	getVideoElement() {
-		const videoElements = this.getVideoElements();;
-		return videoElements.length > 0 ? videoElements[0] : null;
-	},
-
-	getAudioElements() {
-		return [].slice.call(document.querySelectorAll('audio'));
+	initialize(mediaElement, settings) {
+		this.audioContext = new AudioContext();
+		this.mediaSource = this.audioContext.createMediaElementSource(mediaElement);
+		this.nodes.comp = this.createCompressorNode(this.audioContext, settings);
+		this.nodes.gain = this.createGainNode(this.audioContext, settings);
 	},
 
 	isMediaElementPlaying(element) {
 		return (element.currentTime > 0 && !element.paused && !element.ended && element.readyState > 2);
 	},
 
-	// we can skip asking the user for input if there is only one choice, or it's obvious
 	tryFindSingleMediaSource() {
-		const videoElements = this.getVideoElements();
-		const audioElements = this.getAudioElements();
+		const videoElements = [].slice.call(document.querySelectorAll('video'));
+		const audioElements = [].slice.call(document.querySelectorAll('audio'));
 
-		if(videoElements.length == 1 && audioElements.length == 0)
-		{
+		if(videoElements.length == 1) 
 			return videoElements[0];
-		}
-		else if(audioElements.length == 1 && videoElements.length == 0)
-		{
+		else if(audioElements.length == 1 && videoElements.length == 0) 
 			return audioElements[0];
-		}
-		else
-		{
+		else {
 			let element = null;
-			// default to the video that is playing
-			if(videoElements.length > 2) 
+			// more than one choice?, default to what's playing, video then audio
+			if(videoElements.length > 0) 
 				element = videoElements.find(this.isMediaElementPlaying);
-			if(audioElements.length > 2) 
+			if(audioElements.length > 0) 
 				element = audioElements.find(this.isMediaElementPlaying);
 
-			// if nothing is playing, default to the first of video or audio
+			// nothing playing? default to the first, video then audio
 			if(!element && videoElements.length > 0)
 				element = videoElements[0];
 			if(!element && audioElements.length > 0)
 				element = audioElements[0];
 
-				return element;
+			return element;
 		}
-	},
-
-	getPlayingMediaElement(elements) {
-		elements.find(isMediaElementPlaying);
 	},
 
 	turnOff() {
@@ -112,6 +69,7 @@ compressor = {
 			this.nodes.comp.disconnect(this.nodes.gain);
 			this.nodes.gain.disconnect(this.audioContext.destination);
 			this.mediaSource.connect(this.audioContext.destination);
+			// new signal path:  src -> dest
 			this.enabled = false;
 		} 
 		catch(error) {
@@ -119,30 +77,30 @@ compressor = {
 		}
 	},
 
-	// TODO - this needs to take settings instead of keeping the defaults in inject script
-	turnOn() {
-		if(this.enabled)
+	turnOn(settings) {
+		if(this.enabled) 
 			return true;
-
 		if(!this.ready) {
 			const element = this.tryFindSingleMediaSource();
-			console.log("media element audio source", element);
-			if(element != null)
-				this.initialize(element);		
-			return this.ready;
+			if(element != null) {
+				console.log("this element is the audio source being compressed", element);
+				this.initialize(element, settings);	
+				this.ready = true;
+			} else 
+				return false; 
 		}
 
 		try {
-			this.mediaSource.disconnect(this.audioContext.destination);
+			// it's ok if this throws because it wasn't connected
+			try{ this.mediaSource.disconnect(); } catch(e) {}
 			this.mediaSource.connect(this.nodes.comp);
 			this.nodes.comp.connect(this.nodes.gain);
 			this.nodes.gain.connect(this.audioContext.destination);
+			// new signal path:  src -> comp -> gain -> dest
 			this.enabled = true;
 		} 
-		catch(error) {
-			console.error(error);
-		}
-		return this.ready;
+		catch(error) { console.error(error); }
+		return true;
 	},
 
 	setRatio(ratio) {
@@ -188,8 +146,8 @@ compressor = {
 		}
 	},
 
-	getGainReduction() {
-		return this.nodes.comp.reduction;
+	getGainReduction() { 
+		return this.nodes.comp.reduction; 
 	}
 }
 
@@ -201,11 +159,11 @@ chrome.runtime.onMessage.addListener(
 		return;
 
 	  const cmdValue = request['value'];
-	  console.log(`command: ${command}, value: ${cmdValue ? cmdValue : 'none'}`);
+	  //console.log(`command: ${command}, value: ${cmdValue ? cmdValue : 'none'}`);
 
 	  switch(command) {
 		case 'compressorOn':
-			const on = compressor.turnOn();
+			const on = compressor.turnOn(cmdValue);
 			sendResponse({success: on});
 			break;
 		case 'compressorOff':

@@ -17,8 +17,8 @@ function SendToPage(message, callback) {
       });
 }
 
-function SendCommand(command, data) {   
-    SendToPage({do: command, value: data});
+function SendCommand(command, data, callback = null) {   
+    SendToPage({do: command, value: data}, callback);
 }
 
 function getState(callback) {
@@ -29,10 +29,21 @@ function getGainReduction(callback) {
     SendToPage({do: "getGainReduction"}, callback);
 }
 
+function getSettingsFromUI() { 
+    return {
+        ratio: sliders.ratio.value,
+        threshold: sliders.threshold.value,
+        attack: sliders.attack.value,
+        release: sliders.release.value,
+        knee: 30,                           // TODO - put knee in advanced settings option ?
+        gain: sliders.gain.value
+    }
+}
+
 function setupCompressionToggle() {
     onToggle.onclick = () => {
         if(onToggle.checked) {
-            SendToPage({ do : "compressorOn" }, (response) => {
+            SendCommand("compressorOn", getSettingsFromUI(), (response) => {
                 if(!response || !response['success']) 
                     setInactiveUI();
                 else
