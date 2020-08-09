@@ -1,9 +1,4 @@
-// if you checked "fancy-settings" in extensionizr.com, uncomment this lines
-//var settings = new Store("settings", {
-//     "sample_setting": "This is how you use Store.js to remember values"
-//});
-
-//example of using a message handler from the inject scripts
+//need this to make sure the popup shows
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
   	chrome.pageAction.show(sender.tab.id);
