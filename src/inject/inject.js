@@ -48,8 +48,8 @@ class MediaCompressor {
 		this.setRatio(settings.ratio);
 		this.setAttack(settings.attack);
 		this.setRelease(settings.release);
-		this.setGain(settings.gain);
 		this.setKnee(settings.knee);
+		this.setPostCompressionGain(settings.gain);
 	}
 
 	setRatio(ratio) {
@@ -67,10 +67,19 @@ class MediaCompressor {
 	setKnee(knee) {
 		this.nodes.comp.knee.setValueAtTime(knee, this.audioContext.currentTime);
 	}
-	setGain(gain) {
+	setPostCompressionGain(gain) {
 		this.nodes.gain.gain.setValueAtTime(gain, this.audioContext.currentTime);
 	}
-	
+
+	getRatio() { return this.nodes.comp.ratio.value; }
+	getThreshold() { return this.nodes.comp.threshold.value; }
+	getAttack() { return this.nodes.comp.attack.value; }
+	getRelease() { return this.nodes.comp.release.value; }
+	getKnee() { return this.nodes.comp.knee.value; }
+
+	getPostCompressionGain() { return this.nodes.gain.gain; }
+	getCompressionGainReduction() { return this.nodes.comp.reduction; }
+		
 	getState() {
 		const comp = this.nodes.comp;
 		return {
@@ -84,10 +93,6 @@ class MediaCompressor {
 			},
 			gain: this.nodes.gain.gain.value
 		}
-	}
-
-	getGainReduction() { 
-		return this.nodes.comp.reduction; 
 	}
 }
 
@@ -123,6 +128,7 @@ function tryFindSingleMediaSource() {
 }
 
 function sendOnResponse(onState) { sendResponse({ enabled: onState }); }
+function sendValueResponse(val) { sendResponse({ value: val }); }
 
 compressor = null;			// lazy-instantiated MediaCompressor instance 
 const browserRef = chrome ? chrome : browser;		// for cross-compat with FF
@@ -164,12 +170,12 @@ browserRef.runtime.onMessage.addListener(
 		case 'setKnee':
 			compressor?.setKnee(cmdValue); break;
 		case 'setGain':
-			compressor?.setGain(cmdValue); break;
+			compressor?.setPostCompressionGain(cmdValue); break;
 		case 'getState':
 			sendResponse(compressor ? compressor?.getState() : { enabled: false });
 			break;
 		case 'getGainReduction':
-			sendResponse({value: compressor ? compressor?.getGainReduction() : 0 }); 
+			sendValueResponse(compressor ? compressor?.getCompressionGainReduction() : 0); 
 			break;
 	  }
 	});
