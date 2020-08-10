@@ -111,16 +111,11 @@ function setActiveUI() {
 
 function setInactiveUI() {
     clearInterval(pollGainInterval);
-    const offLabel = '........ Off';
+    const offLabel = '........ Off';        // dots are a spacing hack
     onToggleLabel.innerHTML = offLabel;
     tooltips.forEach((elem => elem?.classList.add('inactive')));
     onToggle.checked = false;    
     gainReductionLabel.innerHTML = '-0.00 Decibels';
-}
-
-function setActiveFailedUI() {
-    const errLabel = '........Error';
-    onToggleLabel.innerHTML = offLabel;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
