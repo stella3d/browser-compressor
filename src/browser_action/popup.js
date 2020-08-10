@@ -53,7 +53,7 @@ function getSettingsFromUI() {
 }
 
 function requestCompressorOn() {
-    SendCommand('compressorOn', getSettingsFromUI(), (response) => {
+    SendCommand('turnOn', getSettingsFromUI(), (response) => {
         if(!response || !response['enabled']) 
             setInactiveUI();
         else
@@ -76,7 +76,7 @@ function setupCompressionToggle() {
                 requestCompressorOn();
         } 
         else {
-            SendToPage({do : 'compressorOff'});
+            SendToPage({do : 'turnOff'});
             setInactiveUI();
         }
     }

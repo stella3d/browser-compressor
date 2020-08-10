@@ -127,7 +127,7 @@ browserRef.runtime.onMessage.addListener(
 
 	  const cmdValue = request['value'];
 	  switch(command) {
-		case 'compressorOn':
+		case 'turnOn':
 			if(compressor) {
 				sendOnResponse(compressor.turnOn(cmdValue));
 			} else {
@@ -142,7 +142,7 @@ browserRef.runtime.onMessage.addListener(
 				sendOnResponse(compressor.turnOn());
 			}
 			break;
-		case 'compressorOff':
+		case 'turnOff':
 			compressor?.turnOff(); break;
 		case 'setRatio':
 			compressor?.setRatio(cmdValue); break;
