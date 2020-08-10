@@ -72,7 +72,8 @@ function setupCompressionToggle() {
                     requestCompressorOn();
                 });
             }
-            requestCompressorOn();
+            else
+                requestCompressorOn();
         } 
         else {
             SendToPage({do : "compressorOff"});
