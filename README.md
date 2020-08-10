@@ -19,12 +19,11 @@ There is a very small (less than 10ms) amount of latency inherent to WebAudio, b
 
 For this first release, a handful of sites have been tested, though it should work across many more. 
 
-Some limitationss this has:
+Some limitations this has:
 * Only works with HTML "audio" & "video" tags. Some sites (such as SoundCloud) use a custom setup that does not use these tags.
 
 * Some sites (like Steam or Crunchyroll) keep their actual media content on another domain (such as a static cdn) Cross-Origin Resource Sharing (CORS) restrictions prevent this extension from accessing their audio.
 
-* Chrome's permission model for extensions makes doing content script injection on-demand for arbitrary sites tricky, and i haven't figured it out yet.
 
 ### Currently Tested
 * Youtube
@@ -36,7 +35,9 @@ Some limitationss this has:
 * Vimeo
 * Mixcloud
 
-Direct links to files are supported, for
+Direct links to files are supported, but not `file://` links - you'll have to use a local server for those.' 
+
+##### Supported file types
 * mp3/4
 * webm
 * ogg
