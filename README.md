@@ -24,7 +24,9 @@ This means that [Cross-Origin Resource Sharing](https://en.wikipedia.org/wiki/Cr
 
 #### Latency
 
-There is a very small (< 10ms) amount of [latency inherent to the WebAudio context](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/outputLatency), but i have not noticed it even when watching video - this is less than a frame, even at 90fps.
+There is a very small amount of [latency inherent to the WebAudio context](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/outputLatency). 
+
+On the development machine it was <10 ms.  I have not noticed it even when watching video - this should be less than a frame at 60fps on most systems.
 
 ## Media Support
 
