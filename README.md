@@ -1,6 +1,8 @@
 # Audio Dynamics Compressor
 A chrome extension for doing audio compression with web media.
 
+Intended to help make media with large volume variances more comfortable for people to consume.
+
 # Usage
 To use, click the extension's icon when you're on a page with media you want to adjust the volume range of.
 
