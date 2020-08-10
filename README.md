@@ -22,7 +22,7 @@ There is a very small (less than 10ms) amount of latency inherent to WebAudio, b
   Some sites (such as SoundCloud) use a custom setup that does not use these tags, or uses them in an `<iframe>` which makes it trickier / maybe impossible for the extension to access their media content.
 
 * Some sites (like Steam or Crunchyroll) keep their actual media content on another domain, such as a static CDN.  
-This means that Cross-Origin Resource Sharing (CORS) restrictions prevent this extension from accessing their audio.
+This means that [Cross-Origin Resource Sharing](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) (CORS) restrictions prevent this extension from accessing their audio.
 
 ## Media Support
 
