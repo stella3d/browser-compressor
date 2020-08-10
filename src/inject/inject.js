@@ -79,21 +79,6 @@ class MediaCompressor {
 
 	getPostCompressionGain() { return this.nodes.gain.gain; }
 	getCompressionGainReduction() { return this.nodes.comp.reduction; }
-		
-	getState() {
-		const comp = this.nodes.comp;
-		return {
-			enabled: this.enabled,
-			comp: { 
-				threshold: comp.threshold.value,
-				ratio: comp.ratio.value,
-				attack: comp.attack.value,
-				release: comp.release.value,
-				knee: comp.knee.value
-			},
-			gain: this.nodes.gain.gain.value
-		}
-	}
 }
 
 // helpers to find media elements
@@ -171,11 +156,22 @@ browserRef.runtime.onMessage.addListener(
 			compressor?.setKnee(cmdValue); break;
 		case 'setGain':
 			compressor?.setPostCompressionGain(cmdValue); break;
-		case 'getState':
-			sendResponse(compressor ? compressor?.getState() : { enabled: false });
-			break;
+
 		case 'getGainReduction':
-			sendValueResponse(compressor ? compressor?.getCompressionGainReduction() : 0); 
+			sendValueResponse(compressor ? compressor.getCompressionGainReduction() : 0); 
+			break;
+		case 'getState':
+			sendResponse(compressor ?  {
+				enabled: compressor.enabled,
+				gain: compressor.getPostCompressionGain(),
+				comp: { 
+					threshold: compressor.getThreshold(),
+					ratio: compressor.getRatio(),
+					attack: compressor.getAttack(),
+					release: compressor.getRelease(),
+					knee: compressor.getKnee()
+				}
+			} : { enabled: false });
 			break;
 	  }
 	});
