@@ -34,11 +34,11 @@ function SendCommand(command, data, callback = null) {
 }
 
 function getState(callback) {
-    SendToPage({do: "getState"}, callback);
+    SendToPage({do: 'getState'}, callback);
 }
 
 function getGainReduction(callback) {
-    SendToPage({do: "getGainReduction"}, callback);
+    SendToPage({do: 'getGainReduction'}, callback);
 }
 
 function getSettingsFromUI() { 
@@ -53,7 +53,7 @@ function getSettingsFromUI() {
 }
 
 function requestCompressorOn() {
-    SendCommand("compressorOn", getSettingsFromUI(), (response) => {
+    SendCommand('compressorOn', getSettingsFromUI(), (response) => {
         if(!response || !response['success']) 
             setInactiveUI();
         else
@@ -76,18 +76,18 @@ function setupCompressionToggle() {
                 requestCompressorOn();
         } 
         else {
-            SendToPage({do : "compressorOff"});
+            SendToPage({do : 'compressorOff'});
             setInactiveUI();
         }
     }
 }
 
 function setupSliderUpdates() {
-    sliders.ratio.oninput = () => SendCommand("setRatio", sliders.ratio.value);
-    sliders.threshold.oninput = () => SendCommand("setThreshold", sliders.threshold.value);
-    sliders.attack.oninput = () => SendCommand("setAttack", sliders.attack.value);
-    sliders.release.oninput = () => SendCommand("setRelease", sliders.release.value);
-    sliders.gain.oninput = () => SendCommand("setGain", sliders.gain.value);
+    sliders.ratio.oninput = () => SendCommand('setRatio', sliders.ratio.value);
+    sliders.threshold.oninput = () => SendCommand('setThreshold', sliders.threshold.value);
+    sliders.attack.oninput = () => SendCommand('setAttack', sliders.attack.value);
+    sliders.release.oninput = () => SendCommand('setRelease', sliders.release.value);
+    sliders.gain.oninput = () => SendCommand('setGain', sliders.gain.value);
 }
 
 pollGainInterval = null;

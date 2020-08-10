@@ -142,7 +142,7 @@ browserRef.runtime.onMessage.addListener(
 					return;
 				}
 
-				console.log("this element is the audio source being compressed", element);
+				console.log('this element is the audio source being compressed', element);
 				compressor = new MediaCompressor(element, cmdValue);
 				sendResponse({ success: compressor.turnOn(cmdValue) });
 			}
