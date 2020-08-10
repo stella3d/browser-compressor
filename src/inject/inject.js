@@ -22,10 +22,6 @@ class MediaCompressor {
 		this.nodes.gain.gain.setValueAtTime(settings.gain, currentTime);
 	}
 
-	isMediaElementPlaying(element) {
-		return (element.currentTime > 0 && !element.paused && !element.ended && element.readyState > 2);
-	}
-
 	turnOff() {
 		if(!this.enabled) return;
 		try {
@@ -91,7 +87,11 @@ class MediaCompressor {
 	}
 }
 
-// helper to  find media elements
+// helpers to  find media elements
+function isMediaElementPlaying(element) {
+	return (element.currentTime > 0 && !element.paused && !element.ended && element.readyState > 2);
+}
+
 function tryFindSingleMediaSource() {
 	const videoElements = [].slice.call(document.querySelectorAll('video'));
 	const audioElements = [].slice.call(document.querySelectorAll('audio'));
@@ -104,9 +104,9 @@ function tryFindSingleMediaSource() {
 		let element = null;
 		// more than one choice?, default to what's playing, video then audio
 		if(videoElements.length > 0) 
-			element = videoElements.find(this.isMediaElementPlaying);
+			element = videoElements.find(isMediaElementPlaying);
 		if(audioElements.length > 0) 
-			element = audioElements.find(this.isMediaElementPlaying);
+			element = audioElements.find(isMediaElementPlaying);
 
 		// nothing playing? default to the first, video then audio
 		if(!element && videoElements.length > 0)
