@@ -37,7 +37,7 @@ It may not be possible due to technical reasons, I don't have accounts to test p
 
 ### Files
 
-Direct links to files over HTTP/S are supported.
+Direct links to files over HTTP/S are supported.  This is URLs like `https://example.org/nice.mp4`.
 ##### Supported types
 * .mp3
 * .mp4
