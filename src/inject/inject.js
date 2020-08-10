@@ -171,4 +171,4 @@ browserRef.runtime.onMessage.addListener(
 	});
 
 // this is one of the things that makes the popup appear ??
-browserRef.extension.sendMessage({}, (response) => {});
+browserRef.extension.sendMessage({});
