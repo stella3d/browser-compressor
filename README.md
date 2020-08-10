@@ -11,11 +11,11 @@ Sliders control the parameters of the effect.
 
 [This section of the wikipedia entry](https://en.wikipedia.org/wiki/Dynamic_range_compression#Controls_and_features) explains the common terms used in the controls, such as: `threshold`, `ratio`, `attack`, & `release`.
 
-### Latency
+#### Latency
 
 There is a very small (less than 10ms) amount of latency inherent to WebAudio, but i have not noticed it when watching video - this is less than a frame.
 
-# Limitations
+## Limitations
 
 * Only works with HTML `<audio>` & `<video>` tags. 
   
