@@ -27,6 +27,7 @@ Some limitationss this has:
 * Chrome's permission model for extensions makes doing content script injection on-demand for arbitrary sites tricky, and i haven't figured it out yet.
 
 ### Currently Tested
+* Youtube
 * Twitch
 * Twitter/Periscope
 * Facebook
