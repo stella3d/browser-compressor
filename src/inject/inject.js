@@ -156,7 +156,6 @@ browserRef.runtime.onMessage.addListener(
 			compressor?.setKnee(cmdValue); break;
 		case 'setGain':
 			compressor?.setPostCompressionGain(cmdValue); break;
-
 		case 'getGainReduction':
 			sendValueResponse(compressor ? compressor.getCompressionGainReduction() : 0); 
 			break;
