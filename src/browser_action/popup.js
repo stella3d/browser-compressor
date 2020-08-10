@@ -87,7 +87,7 @@ function setupSliderUpdates() {
     sliders.threshold.oninput = () => SendCommand('setThreshold', sliders.threshold.value);
     sliders.attack.oninput = () => SendCommand('setAttack', sliders.attack.value);
     sliders.release.oninput = () => SendCommand('setRelease', sliders.release.value);
-    sliders.gain.oninput = () => SendCommand('setGain', sliders.gain.value);
+    sliders.gain.oninput = () => SendCommand('setPostGain', sliders.gain.value);
 }
 
 pollGainInterval = null;

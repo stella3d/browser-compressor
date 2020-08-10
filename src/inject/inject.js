@@ -49,7 +49,7 @@ class MediaCompressor {
 		this.setAttack(settings.attack);
 		this.setRelease(settings.release);
 		this.setKnee(settings.knee);
-		this.setPostCompressionGain(settings.gain);
+		this.setPostGain(settings.gain);
 	}
 
 	setRatio(ratio) {
@@ -67,7 +67,7 @@ class MediaCompressor {
 	setKnee(knee) {
 		this.nodes.comp.knee.setValueAtTime(knee, this.audioContext.currentTime);
 	}
-	setPostCompressionGain(gain) {
+	setPostGain(gain) {
 		this.nodes.gain.gain.setValueAtTime(gain, this.audioContext.currentTime);
 	}
 
@@ -76,8 +76,7 @@ class MediaCompressor {
 	getAttack() { return this.nodes.comp.attack.value; }
 	getRelease() { return this.nodes.comp.release.value; }
 	getKnee() { return this.nodes.comp.knee.value; }
-
-	getPostCompressionGain() { return this.nodes.gain.gain; }
+	getPostGain() { return this.nodes.gain.gain; }
 	getCompressionGainReduction() { return this.nodes.comp.reduction; }
 }
 
@@ -115,7 +114,7 @@ function tryFindSingleMediaSource() {
 function sendOnResponse(onState) { sendResponse({ enabled: onState }); }
 function sendValueResponse(val) { sendResponse({ value: val }); }
 
-compressor = null;			// lazy-instantiated MediaCompressor instance 
+compressor = null;					// MediaCompressor instance 
 const browserRef = chrome ? chrome : browser;		// for cross-compat with FF
 
 // handle messages coming from the popup controls
@@ -154,8 +153,8 @@ browserRef.runtime.onMessage.addListener(
 			compressor?.setRelease(cmdValue); break;
 		case 'setKnee':
 			compressor?.setKnee(cmdValue); break;
-		case 'setGain':
-			compressor?.setPostCompressionGain(cmdValue); break;
+		case 'setPostGain':
+			compressor?.setPostGain(cmdValue); break;
 		case 'getGainReduction':
 			sendValueResponse(compressor ? compressor.getCompressionGainReduction() : 0); 
 			break;
