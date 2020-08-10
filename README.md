@@ -26,7 +26,7 @@ Among the reasons for this are:
 
 * Chrome's permission model for extensions makes doing content script injection on-demand for arbitrary sites tricky, and i haven't figured it out yet.
 
-### Currently Supported
+### Currently Tested
 * Twitch
 * Twitter/Periscope
 * Facebook
@@ -35,12 +35,9 @@ Among the reasons for this are:
 * Vimeo
 * Mixcloud
 
-Direct links to files are also supported, for
+Direct links to files are supported, for
 * mp3/4
 * webm
 * ogg
 
-
-Wider site support is a _top priority_ for future development.
-
-Apologies for the inconvenience if your favorite isn't supported yet - it may not be possible, and this extension is very new.
+Apologies for the inconvenience if your favorite doesn't work - it may not be possible, and this extension is very new.
