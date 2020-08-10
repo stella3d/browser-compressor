@@ -15,31 +15,42 @@ Sliders control the parameters of the effect.
 
 There is a very small (less than 10ms) amount of latency inherent to WebAudio, but i have not noticed it when watching video - this is less than a frame.
 
-# Website Support
+# Limitations
 
+* Only works with HTML `<audio>` & `<video>` tags. 
+  
+  Some sites (such as SoundCloud) use a custom setup that does not use these tags, or uses them in an `<iframe>` which makes it trickier / maybe impossible for the extension to access their media content.
+
+* Some sites (like Steam or Crunchyroll) keep their actual media content on another domain, such as a static CDN.  
+This means that Cross-Origin Resource Sharing (CORS) restrictions prevent this extension from accessing their audio.
+
+## Media Support
+
+### Websites
 For this first release, a handful of sites have been tested, though it should work across many more. 
 
-Some limitations this has:
-* Only works with HTML "audio" & "video" tags. Some sites (such as SoundCloud) use a custom setup that does not use these tags.
+Sites tested as working include:
+_Youtube_, _Twitch_, _Twitter_, _Periscope_, _Amazon video_, _CBS all access_, _Vimeo_, _Mixcloud_
 
-* Some sites (like Steam or Crunchyroll) keep their actual media content on another domain (such as a static cdn) Cross-Origin Resource Sharing (CORS) restrictions prevent this extension from accessing their audio.
+Apologies for the inconvenience if your favorite site doesn't work. 
+It may not be possible due to technical reasons, I don't have accounts to test popular paywalled streaming services, and this extension is very new. 
+
+### Files
+
+Direct links to files over HTTP/S are supported.
+##### Supported types
+* .mp3
+* .mp4
+* .webm
+* .ogg
+
+However, `file://` links will not work - you'll have to use a local HTTP server + `localhost://` link for those.  
+Alternately, if you're trying to apply compression to local files, the excellent [VLC] can do this on all platforms, at least as well as WebAudio can.
 
 
-### Currently Tested
-* Youtube
-* Twitch
-* Twitter/Periscope
-* Facebook
-* Amazon video
-* CBS All Access
-* Vimeo
-* Mixcloud
+## Issues / Requests
 
-Direct links to files are supported, but not `file://` links - you'll have to use a local server for those.' 
+Keeping in mind the above limitations on what websites will work (I can't promise to make it work on _x_ website), please feel free to submit a GitHub issue if you notice an obvious bug.  
 
-##### Supported file types
-* mp3/4
-* webm
-* ogg
 
-Apologies for the inconvenience if your favorite doesn't work - it may not be possible, and this extension is very new.
+You can also submit user experience feedback or small feature requests as an issue.
