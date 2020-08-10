@@ -45,7 +45,7 @@ Direct links to files over HTTP/S are supported.
 * .ogg
 
 However, `file://` links will not work - you'll have to use a local HTTP server + `localhost://` link for those.  
-Alternately, if you're trying to apply compression to local files, the excellent [VLC] can do this on all platforms, at least as well as WebAudio can.
+Alternately, if you're trying to apply compression to local files, the excellent [VLC](https://www.videolan.org/vlc/index.html) can do this on all platforms, at least as well as WebAudio can.
 
 
 ## Issues / Requests
