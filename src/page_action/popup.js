@@ -11,19 +11,21 @@ sliders = {
     gain: document.getElementById('gain')
 }
 
+const browserRef = chrome ? chrome : browser;   // for cross-compat with FF
+
 function getActiveTab(callback) {
-    chrome.tabs.query({active: true, currentWindow: true}, callback);
+    browserRef.tabs.query({active: true, currentWindow: true}, callback);
 }
 
 function SendToPage(message, callback) {
     getActiveTab((tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, message, callback);
+        browserRef.tabs.sendMessage(tabs[0].id, message, callback);
     });
 }
 
 function executeContentScript(sciptFilename, callback) {
     getActiveTab((tabs) => {
-        chrome.tabs.executeScript(tabs[0].id, {file: sciptFilename}, callback);
+        browserRef.tabs.executeScript(tabs[0].id, {file: sciptFilename}, callback);
     });
 }
 

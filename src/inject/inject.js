@@ -1,3 +1,4 @@
+// Links a media element's audio to a dynamic range compressor, in a WebAudio context
 class MediaCompressor {
 	constructor(mediaElement, settings) {
 		this.enabled = false;
@@ -87,7 +88,7 @@ class MediaCompressor {
 	}
 }
 
-// helpers to  find media elements
+// helpers to find media elements
 function isMediaElementPlaying(element) {
 	return (element.currentTime > 0 && !element.paused && !element.ended && element.readyState > 2);
 }
@@ -105,7 +106,7 @@ function tryFindSingleMediaSource() {
 		// more than one choice?, default to what's playing, video then audio
 		if(videoElements.length > 0) 
 			element = videoElements.find(isMediaElementPlaying);
-		if(audioElements.length > 0) 
+		if(!element && audioElements.length > 0) 
 			element = audioElements.find(isMediaElementPlaying);
 
 		// nothing playing? default to the first, video then audio
@@ -119,9 +120,11 @@ function tryFindSingleMediaSource() {
 }
 
 
-compressor = null;			// lazy-instantiated 
+compressor = null;			// lazy-instantiated MediaCompressor instance 
+const browserRef = chrome ? chrome : browser;		// for cross-compat with FF
+
 // handle messages coming from the popup controls
-chrome.runtime.onMessage.addListener(
+browserRef.runtime.onMessage.addListener(
 	(request, sender, sendResponse) => {
 	  const command = request['do'];
 	  if(!command) 
@@ -166,4 +169,4 @@ chrome.runtime.onMessage.addListener(
 	});
 
 // this is one of the things that makes the popup appear ??
-chrome.extension.sendMessage({}, (response) => {});
+browserRef.extension.sendMessage({}, (response) => {});
