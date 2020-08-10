@@ -17,10 +17,10 @@ There is a very small (less than 10ms) amount of latency inherent to WebAudio, b
 
 # Website Support
 
-For this first release, a handful of sites are explicitly supported, instead of working across everything. 
+For this first release, a handful of sites have been tested, though it should work across many more. 
 
-Among the reasons for this are:
-* This only works with HTML "audio" & "video" tags. Some sites (such as SoundCloud) use a custom setup that does not use these tags.
+Some limitationss this has:
+* Only works with HTML "audio" & "video" tags. Some sites (such as SoundCloud) use a custom setup that does not use these tags.
 
 * Some sites (like Steam or Crunchyroll) keep their actual media content on another domain (such as a static cdn) Cross-Origin Resource Sharing (CORS) restrictions prevent this extension from accessing their audio.
 
