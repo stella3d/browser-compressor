@@ -36,7 +36,7 @@ class MediaCompressor {
 		catch(error) {console.error(error);}
 	}
 
-	turnOn(settings) {
+	turnOn(settings = null) {
 		if(this.enabled) return true;
 		try {
 			// ok if this throws because it wasn't connected
@@ -45,8 +45,10 @@ class MediaCompressor {
 			this.nodes.comp.connect(this.nodes.gain);
 			this.nodes.gain.connect(this.audioContext.destination);
 			// new signal path:  src -> comp -> gain -> dest
-			this.applySettings(settings);
 			this.enabled = true;
+			// no settings means use previous ones
+			if(settings)
+				this.applySettings(settings);
 		} 
 		catch(error) { console.error(error); }
 		return this.enabled;
@@ -144,7 +146,7 @@ browserRef.runtime.onMessage.addListener(
 
 				console.log('this element is the audio source being compressed', element);
 				compressor = new MediaCompressor(element, cmdValue);
-				sendResponse({ success: compressor.turnOn(cmdValue) });
+				sendResponse({ success: compressor.turnOn() });
 			}
 			break;
 		case 'compressorOff':
