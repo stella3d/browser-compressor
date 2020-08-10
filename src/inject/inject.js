@@ -44,14 +44,12 @@ class MediaCompressor {
 	}
 
 	applySettings(settings) {
-		const currentTime = this.audioContext.currentTime;
-		const comp = this.nodes.comp;
-		comp.threshold.setValueAtTime(settings.threshold, currentTime);
-		comp.ratio.setValueAtTime(settings.ratio, currentTime);
-		comp.attack.setValueAtTime(settings.attack, currentTime);
-		comp.release.setValueAtTime(settings.release, currentTime);
-		comp.knee.setValueAtTime(settings.knee, currentTime);
-		this.nodes.gain.gain.setValueAtTime(settings.gain, currentTime);
+		this.setThreshold(settings.threshold);
+		this.setRatio(settings.ratio);
+		this.setAttack(settings.attack);
+		this.setRelease(settings.release);
+		this.setGain(settings.gain);
+		this.nodes.comp.knee.setValueAtTime(settings.knee, currentTime);
 	}
 
 	setRatio(ratio) {
