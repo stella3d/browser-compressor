@@ -33,6 +33,13 @@ On the development machine it was <10 ms.  I have not noticed it even when watch
 ### Websites
 For this first release, a handful of sites have been tested, though it should work across many more. 
 
+The extension chooses which media element to use automatically, based on:
+* Are any actively playing ?  If so, the first active one is chosen.  
+* `<video>` before otherwise-equivalent priority `<audio>`
+  
+Support for manually picking the media element to use may come later.  
+On some sites, you need to press play before the extension will see a media element.
+
 Sites tested as working include:
 _Youtube_, _Twitch_, _Twitter_, _Periscope_, _Amazon video_, _CBS all access_, _Vimeo_, _Mixcloud_
 
