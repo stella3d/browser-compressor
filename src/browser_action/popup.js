@@ -54,7 +54,7 @@ function getSettingsFromUI() {
 
 function requestCompressorOn() {
     SendCommand('compressorOn', getSettingsFromUI(), (response) => {
-        if(!response || !response['success']) 
+        if(!response || !response['enabled']) 
             setInactiveUI();
         else
             setActiveUI();

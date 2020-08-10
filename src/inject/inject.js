@@ -33,7 +33,7 @@ class MediaCompressor {
 			// new signal path:  src -> dest
 			this.enabled = false;
 		} 
-		catch(error) {console.error(error);}
+		catch(error) { console.error(error); }
 	}
 
 	turnOn(settings = null) {
@@ -121,6 +121,7 @@ function tryFindSingleMediaSource() {
 	}
 }
 
+function sendOnResponse(onState) { sendResponse({ enabled: onState }); }
 
 compressor = null;			// lazy-instantiated MediaCompressor instance 
 const browserRef = chrome ? chrome : browser;		// for cross-compat with FF
@@ -136,17 +137,17 @@ browserRef.runtime.onMessage.addListener(
 	  switch(command) {
 		case 'compressorOn':
 			if(compressor) {
-				sendResponse({ success: compressor.turnOn(cmdValue) });
+				sendOnResponse(compressor.turnOn(cmdValue) );
 			} else {
 				const element = tryFindSingleMediaSource();
 				if(!element) {
-					sendResponse({ success: false });
+					sendOnResponse(false);
 					return;
 				}
 
 				console.log('this element is the audio source being compressed', element);
 				compressor = new MediaCompressor(element, cmdValue);
-				sendResponse({ success: compressor.turnOn() });
+				sendOnResponse(compressor.turnOn());
 			}
 			break;
 		case 'compressorOff':
