@@ -49,7 +49,7 @@ class MediaCompressor {
 		this.setAttack(settings.attack);
 		this.setRelease(settings.release);
 		this.setGain(settings.gain);
-		this.nodes.comp.knee.setValueAtTime(settings.knee, currentTime);
+		this.setKnee(settings.knee);
 	}
 
 	setRatio(ratio) {
@@ -63,6 +63,9 @@ class MediaCompressor {
 	}
 	setRelease(release) {
 		this.nodes.comp.release.setValueAtTime(release, this.audioContext.currentTime);
+	}
+	setKnee(knee) {
+		this.nodes.comp.knee.setValueAtTime(knee, this.audioContext.currentTime);
 	}
 	setGain(gain) {
 		this.nodes.gain.gain.setValueAtTime(gain, this.audioContext.currentTime);
@@ -135,7 +138,7 @@ browserRef.runtime.onMessage.addListener(
 	  switch(command) {
 		case 'compressorOn':
 			if(compressor) {
-				sendOnResponse(compressor.turnOn(cmdValue) );
+				sendOnResponse(compressor.turnOn(cmdValue));
 			} else {
 				const element = tryFindSingleMediaSource();
 				if(!element) {
@@ -158,6 +161,8 @@ browserRef.runtime.onMessage.addListener(
 			compressor?.setAttack(cmdValue); break;
 		case 'setRelease':
 			compressor?.setRelease(cmdValue); break;
+		case 'setKnee':
+			compressor?.setKnee(cmdValue); break;
 		case 'setGain':
 			compressor?.setGain(cmdValue); break;
 		case 'getState':
