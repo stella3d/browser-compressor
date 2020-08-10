@@ -11,31 +11,7 @@ class MediaCompressor {
 		}
 		this.applySettings(settings);
 	}
-
-	applySettings(settings) {
-		const currentTime = this.audioContext.currentTime;
-		const comp = this.nodes.comp;
-		comp.threshold.setValueAtTime(settings.threshold, currentTime);
-		comp.ratio.setValueAtTime(settings.ratio, currentTime);
-		comp.attack.setValueAtTime(settings.attack, currentTime);
-		comp.release.setValueAtTime(settings.release, currentTime);
-		comp.knee.setValueAtTime(settings.knee, currentTime);
-		this.nodes.gain.gain.setValueAtTime(settings.gain, currentTime);
-	}
-
-	turnOff() {
-		if(!this.enabled) return;
-		try {
-			this.mediaSource.disconnect(this.nodes.comp);
-			this.nodes.comp.disconnect(this.nodes.gain);
-			this.nodes.gain.disconnect(this.audioContext.destination);
-			this.mediaSource.connect(this.audioContext.destination);
-			// new signal path:  src -> dest
-			this.enabled = false;
-		} 
-		catch(error) { console.error(error); }
-	}
-
+	
 	turnOn(settings = null) {
 		if(this.enabled) return true;
 		try {
@@ -52,6 +28,30 @@ class MediaCompressor {
 		} 
 		catch(error) { console.error(error); }
 		return this.enabled;
+	}
+
+	turnOff() {
+		if(!this.enabled) return;
+		try {
+			this.mediaSource.disconnect(this.nodes.comp);
+			this.nodes.comp.disconnect(this.nodes.gain);
+			this.nodes.gain.disconnect(this.audioContext.destination);
+			this.mediaSource.connect(this.audioContext.destination);
+			// new signal path:  src -> dest
+			this.enabled = false;
+		} 
+		catch(error) { console.error(error); }
+	}
+
+	applySettings(settings) {
+		const currentTime = this.audioContext.currentTime;
+		const comp = this.nodes.comp;
+		comp.threshold.setValueAtTime(settings.threshold, currentTime);
+		comp.ratio.setValueAtTime(settings.ratio, currentTime);
+		comp.attack.setValueAtTime(settings.attack, currentTime);
+		comp.release.setValueAtTime(settings.release, currentTime);
+		comp.knee.setValueAtTime(settings.knee, currentTime);
+		this.nodes.gain.gain.setValueAtTime(settings.gain, currentTime);
 	}
 
 	setRatio(ratio) {
