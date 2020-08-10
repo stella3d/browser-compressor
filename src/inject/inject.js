@@ -161,7 +161,7 @@ browserRef.runtime.onMessage.addListener(
 		case 'getState':
 			sendResponse(compressor ?  {
 				enabled: compressor.enabled,
-				gain: compressor.getPostCompressionGain(),
+				gain: compressor.getPostGain(),
 				comp: { 
 					threshold: compressor.getThreshold(),
 					ratio: compressor.getRatio(),
