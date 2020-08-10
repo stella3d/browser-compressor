@@ -12,9 +12,8 @@ body {
     font-weight: bold;
 }
 
-.bold {
-    font-weight: bold;
-}
+.bold { font-weight: bold; }
+.italic { font-style: italic; }
 
 .boldmono {
     font-weight: bold;

@@ -24,9 +24,10 @@
         There is a very small (less than 10ms) amount of latency inherent to WebAudio, but i have not noticed it when watching video - this is less than a frame.
         </br></br>
 
-        <div class="header">Website Support</div></br>
-        For this first release, a handful of sites are explicitly supported, instead of working across everything.  
-        The reasons for this are multiple:
+        <div class="header">Limitations</div></br>
+
+        This doesn't work with every site, for a few reasons.</br>
+    
         <ol>
             <li>
                 This only works with HTML "audio" & "video" tags.</br>
@@ -38,36 +39,30 @@
                     Cross-Origin Resource Sharing
                 </a> (CORS) restrictions prevent this extension from accessing their audio.
             </li></br>
-            <li>
-              Chrome's permission model for extensions makes doing content script injection on-demand for arbitrary sites tricky, and i haven't figured it out yet.
-            </li></br>
-            <li>
-            I don't have access to an account to test most paywalled streaming services
             </li>
         </ol>
-    
-        <div class="subhead">Currently Supported</div>
+
+        <div class="header">Media Support</div></br>
+        <div class="subhead">Websites</div>
+        For this first release, a handful of sites have been tested, though it should work across many more.</br>
+        Sites tested as working include:</br>
+        <div class="italic">Youtube, Twitch, Twitter, Periscope, Amazon video, CBS all access, Vimeo, Mixcloud</div></br>
+
+        Apologies for the inconvenience if your favorite site doesn't work. It may not be possible due to technical reasons, I don't have accounts to test popular paywalled streaming services, and this extension is very new.</br>
+
+        <div class="subhead">Files</div>
+        Direct links to files are also supported, for the following types (more may work):</br>
         <ul>
-            <li class="bold">Twitch</li>
-            <li class="bold">Twitter/Periscope</li>
-            <li class="bold">Facebook</li>
-            <li class="bold">Amazon video</li>
-            <li class="bold">CBS All Access</li>
-            <li class="bold">Vimeo</li>
-            <li class="bold">Mixcloud</li>
-        </ul>
-        Direct links to files are also supported, for 
-        <ul>
-            <li class="bold">mp3/4</li>
-            <li class="bold">webm</li>
-            <li class="bold">ogg</li>
+            <li class="bold">.mp3</li>
+            <li class="bold">.mp4</li>
+            <li class="bold">.webm</li>
+            <li class="bold">.ogg</li>
         </ul>
 
         Wider site support is a top priority for future development. </br>
+
         Apologies for the inconvenience if your favorite isn't supported yet - it may not be possible, and this extension is very new.
-        </br>
-        <div>
-        </div>
+        </br></br>
         <div class="header">Preferences</div>
         </br>
         <div>
