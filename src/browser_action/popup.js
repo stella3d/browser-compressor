@@ -8,6 +8,7 @@ sliders = {
     threshold: document.getElementById('threshold'),
     attack: document.getElementById('attack'),
     release: document.getElementById('release'),
+    knee: document.getElementById('knee'),
     gain: document.getElementById('gain')
 }
 
@@ -44,30 +45,19 @@ function SendCommand(command, data, callback = null) {
     SendToPage({do: command, value: data}, callback);
 }
 
-function getState(callback) {
-    SendToPage({do: 'getState'}, callback);
-}
+function getState(done) { SendToPage({do: 'getState'}, done); }
+function getGainReduction(done) { SendToPage({do: 'getGainReduction'}, done); }
 
-function getGainReduction(callback) {
-    SendToPage({do: 'getGainReduction'}, (response) => {
-        logLastErrorAsWarning();
-        callback(response)
-    });
-}
-
-function getSettingsFromUI() { 
-    return {
+function requestCompressorOn() {
+    SendCommand('turnOn', {
         ratio: sliders.ratio.value,
         threshold: sliders.threshold.value,
         attack: sliders.attack.value,
         release: sliders.release.value,
         knee: 30,                           // TODO - put knee in advanced settings option ?
         gain: sliders.gain.value
-    }
-}
-
-function requestCompressorOn() {
-    SendCommand('turnOn', getSettingsFromUI(), (response) => {
+    }, 
+    (response) => {
         logLastErrorAsWarning();
         if(!response || !response['enabled']) 
             setInactiveUI();
@@ -138,16 +128,20 @@ function setInactiveUI() {
     gainReductionLabel.innerHTML = '-0.00 Decibels';
 }
 
+function lastErrIsCouldNotConnect() {
+    const connectErrMsg = 'Could not establish connection';
+    const lastErr = browserRef.runtime.lastError;
+    return lastErr && lastErr.message.includes(connectErrMsg);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     setupCompressionToggle();
     setupSliderUpdates();
 
     // sync popup UI state with the browser page's compressor when opened
     getState((response) => {
-        const lastErr = browserRef.runtime.lastError;
-        const connectErrMsg = 'Could not establish connection';
-        const notInjected = lastErr && lastErr.message.includes(connectErrMsg);
-
+        // not being injected is normal if user hasn't turned it on
+        const notInjected = lastErrIsCouldNotConnect();
         if(notInjected || !response || !response['enabled']) {
             setInactiveUI();
             return;
