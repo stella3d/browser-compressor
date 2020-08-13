@@ -11,11 +11,10 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "background": {
-    "scripts": ["src/bg/background.js"],
-    "persistent": false
+  "options_ui": {
+    "page" : "src/options/index.html",
+    "open_in_tab": true
   },
-  "options_page": "src/options/index.html",
   "browser_action": {
     "default_icon": "icons/icon48.png",
     "default_title": "Audio Compressor Controls",
