@@ -20,5 +20,8 @@
     "default_title": "Audio Compressor Controls",
     "default_popup": "src/browser_action/browser_action.html"
   },
-  "permissions": [ "activeTab" ]
+  "permissions": [ 
+    "activeTab",
+    "storage" 
+  ]
 }
