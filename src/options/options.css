@@ -3,13 +3,8 @@ body {
 }
 
 .header {
-    font-size: 24px;
-    font-weight: bolder;
-}
-
-.subhead {
     font-size: 18px;
-    font-weight: bold;
+    font-weight: bolder;
 }
 
 .text {
@@ -18,10 +13,3 @@ body {
 }
 
 .bold { font-weight: bold; }
-.italic { font-style: italic; }
-.hide { display: none; }
-
-.boldmono {
-    font-weight: bold;
-    font-family: monospace;
-}
