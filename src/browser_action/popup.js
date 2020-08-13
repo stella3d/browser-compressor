@@ -13,17 +13,16 @@ sliders = {
 
 const browserRef = chrome ? chrome : browser;   // for cross-compat with FF
 
-function handleLastError(callback) {
-    return (response) => {
-        if(browserRef.runtime.lastError)
-            console.error(browserRef.runtime.lastError);
-        else if(callback) 
-            callback(response);
-    }
+function logLastErrorAsWarning() {
+    if(browserRef.runtime.lastError)
+        console.warn(browserRef.runtime.lastError);
 }
 
 function getActiveTab(callback) {
-    browserRef.tabs.query({active: true, currentWindow: true}, callback);
+    browserRef.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        logLastErrorAsWarning();
+        callback(tabs);
+    });
 }
 
 function SendToPage(message, callback) {
@@ -34,7 +33,10 @@ function SendToPage(message, callback) {
 
 function executeContentScript(sciptFilename, callback) {
     getActiveTab((tabs) => {
-        browserRef.tabs.executeScript(tabs[0].id, {file: sciptFilename}, callback);
+        browserRef.tabs.executeScript(tabs[0].id, {file: sciptFilename}, (response) => {
+            logLastErrorAsWarning();
+            if(callback) callback(response);
+        });
     });
 }
 
@@ -47,7 +49,10 @@ function getState(callback) {
 }
 
 function getGainReduction(callback) {
-    SendToPage({do: 'getGainReduction'}, callback);
+    SendToPage({do: 'getGainReduction'}, (response) => {
+        logLastErrorAsWarning();
+        callback(response)
+    });
 }
 
 function getSettingsFromUI() { 
@@ -63,6 +68,7 @@ function getSettingsFromUI() {
 
 function requestCompressorOn() {
     SendCommand('turnOn', getSettingsFromUI(), (response) => {
+        logLastErrorAsWarning();
         if(!response || !response['enabled']) 
             setInactiveUI();
         else
@@ -76,8 +82,8 @@ function setupCompressionToggle() {
         if(onToggle.checked) {
             if(!hasInjected) {
                 // need to finish injecting before requesting compression on can succeed
-                executeContentScript('src/inject/inject.js', (results) => {
-                    console.log('content script injection results', results);
+                executeContentScript('src/inject/inject.js', () => {
+                    console.log('content script injection should be done');
                     hasInjected = true;
                     requestCompressorOn();
                 });
@@ -106,6 +112,7 @@ function setPollGainInterval() {
     const pollGainMilliseconds = 50;
     pollGainInterval = setInterval(() => {
         getGainReduction((response) => {
+            logLastErrorAsWarning();
             if(!response) return;
             const val = response['value'];
             if(!val) return;
