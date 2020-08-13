@@ -127,7 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // sync popup UI state with the browser page's compressor when opened
     getState((response) => {
-        if(!response || !response['enabled']) {
+        const lastErr = browserRef.runtime.lastError;
+        const connectErrMsg = 'Could not establish connection';
+        const notInjected = lastErr && lastErr.message.includes(connectErrMsg);
+
+        if(notInjected || !response || !response['enabled']) {
             setInactiveUI();
             return;
         }
