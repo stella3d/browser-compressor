@@ -6,76 +6,11 @@
         <link rel="stylesheet" href="options.css">
     </head>
     <body>
-        <div class="header">Usage</div>
-        To use, click the extension's icon when you're on a page with media you want to adjust the volume range of.</br></br>
-        
-        You should see a small popup with multiple sliders on the bottom, and one large toggle switch on the top.</br>
-        Click that toggle switch, and if media is found on the page that we can work with, the popup UI will turn on along with the effect.</br></br>
-        
-        Sliders control the parameters of the effect.</br>
-        <a href="https://en.wikipedia.org/wiki/Dynamic_range_compression#Controls_and_features">
-            This section
-        </a> 
-        of the wiki entry explains the common terms used in the controls, such as: 
-        <div class="boldmono">'threshold', 'ratio', 'attack', 'release'</div>
-        </br>
-
-        <div class="subhead">Latency</div></br>
-        There is a very small (less than 10ms) amount of latency inherent to WebAudio, but i have not noticed it when watching video - this is less than a frame.
-        </br></br>
-
-        <div class="header">Limitations</div></br>
-
-        This doesn't work with every site, for a few reasons.</br>
-    
-        <ol>
-            <li>
-                This only works with HTML "audio" & "video" tags.</br>
-                Some sites (such as SoundCloud) use a custom setup that does not use these tags.
-            </li></br>
-            <li>
-                Some sites (like Steam or Crunchyroll) keep their actual media content on another domain (such as a static cdn), and
-                <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">
-                    Cross-Origin Resource Sharing
-                </a> (CORS) restrictions prevent this extension from accessing their audio.
-            </li></br>
-            </li>
-        </ol>
-
-        <div class="header">Media Support</div></br>
-        <div class="subhead">Websites</div>
-        For this first release, a handful of sites have been tested, though it should work across many more.</br>
-        Sites tested as working include:</br>
-        <div class="italic">Youtube, Twitch, Twitter, Periscope, Amazon video, CBS all access, Vimeo, Mixcloud</div>
-        </br></br>
-
-        <div class="subhead">Files</div>
-        Direct links to files are also supported, for the following types (more may work):</br>
-        <ul>
-            <li class="bold">.mp3</li>
-            <li class="bold">.mp4</li>
-            <li class="bold">.webm</li>
-            <li class="bold">.ogg</li>
-        </ul>
-
-        Wider site support is a top priority for future development. </br>
-
-        Apologies for the inconvenience if your favorite isn't supported yet - it may not be possible, and this extension is very new.
-        </br></br>
-
+        <div class="header">Preferences</div>
         </br>
         <div>
-            This extension allows you to apply 
-            <a href="https://en.wikipedia.org/wiki/Dynamic_range_compression">
-                dynamic range compression
-            </a> 
-            to audio on the web.  
-            </br></br>
-            Compression reduces the amount that volume varies , which can be more comfortable for media with a lot of variation.
-            </br></br>
-
-
+            There are currently no settings aside from those shown in the pop-up, but they will be here when added.
         </div>
-
+        </br>
     </body>
 </html>

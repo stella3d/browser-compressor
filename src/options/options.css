@@ -12,8 +12,14 @@ body {
     font-weight: bold;
 }
 
+.text {
+    font-size: 14px;
+    font-weight: normal;
+}
+
 .bold { font-weight: bold; }
 .italic { font-style: italic; }
+.hide { display: none; }
 
 .boldmono {
     font-weight: bold;
