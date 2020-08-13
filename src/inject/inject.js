@@ -111,9 +111,6 @@ function tryFindSingleMediaSource() {
 	}
 }
 
-function sendOnResponse(onState) { sendResponse({ enabled: onState }); }
-function sendValueResponse(val) { sendResponse({ value: val }); }
-
 compressor = null;					// MediaCompressor instance 
 const browserRef = chrome ? chrome : browser;		// for cross-compat with FF
 
@@ -128,17 +125,17 @@ browserRef.runtime.onMessage.addListener(
 	  switch(command) {
 		case 'turnOn':
 			if(compressor) {
-				sendOnResponse(compressor.turnOn(cmdValue));
+				sendResponse({ enabled: compressor.turnOn(cmdValue)});
 			} else {
 				const element = tryFindSingleMediaSource();
 				if(!element) {
-					sendOnResponse(false);
+					sendResponse({ enabled: false});
 					return;
 				}
 
 				console.log('this element is the audio source being compressed', element);
 				compressor = new MediaCompressor(element, cmdValue);
-				sendOnResponse(compressor.turnOn());
+				sendResponse({ enabled: compressor.turnOn()});
 			}
 			break;
 		case 'turnOff':
@@ -156,7 +153,7 @@ browserRef.runtime.onMessage.addListener(
 		case 'setPostGain':
 			compressor?.setPostGain(cmdValue); break;
 		case 'getGainReduction':
-			sendValueResponse(compressor ? compressor.getCompressionGainReduction() : 0); 
+			sendResponse({ value: compressor ? compressor.getCompressionGainReduction() : 0 }); 
 			break;
 		case 'getState':
 			sendResponse(compressor ?  {

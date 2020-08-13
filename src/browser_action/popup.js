@@ -13,6 +13,15 @@ sliders = {
 
 const browserRef = chrome ? chrome : browser;   // for cross-compat with FF
 
+function handleLastError(callback) {
+    return (response) => {
+        if(browserRef.runtime.lastError)
+            console.error(browserRef.runtime.lastError);
+        else if(callback) 
+            callback(response);
+    }
+}
+
 function getActiveTab(callback) {
     browserRef.tabs.query({active: true, currentWindow: true}, callback);
 }
@@ -68,6 +77,7 @@ function setupCompressionToggle() {
             if(!hasInjected) {
                 // need to finish injecting before requesting compression on can succeed
                 executeContentScript('src/inject/inject.js', (results) => {
+                    console.log('content script injection results', results);
                     hasInjected = true;
                     requestCompressorOn();
                 });
